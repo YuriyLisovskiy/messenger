@@ -1,0 +1,115 @@
+body, html {
+    background: url("../images/sky.jpg");
+    background-attachment: fixed;
+    background-size: cover;
+    margin:0;
+    padding:0;
+    overflow-x: hidden;
+}
+html {
+    position: relative;
+    min-height: 100%;
+}
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+#page-wrapper {
+    position: relative;
+    margin-bottom: 20px;
+}
+.footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding: 7px;
+    width: 100vw;
+    background: #222222;
+    border-top: 1px solid #111111;
+    color: #A9A9A9;
+    text-align: center;
+}
+.panel-search-result {
+    display: inline-block;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+.panel-search-result .panel-search-result-text {
+    display: none;
+    width: 248px;
+    min-width: 248px;
+    background: #ffffff;
+    border-radius: 5px;
+    position: absolute;
+    margin: 15px auto auto -297px;
+    z-index: 1;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+    max-height: 300px;
+    overflow: auto;
+}
+.panel-search-field {
+    height: 35px;
+    width: 250px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #484848;
+    padding-left: 10px;
+}
+.panel-search-field::-ms-clear{
+    display: none;
+}
+.panel-search-btn {
+    height: 35px;
+    width: 40px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #484848;
+}
+.panel-search-btn:hover {
+    background: #A9A9A9;
+    -webkit-transition: background .2s ease;
+    -moz-transition: background .2s ease;
+    -o-transition: background .2s ease;
+}
+.panel-user-found {
+    overflow: auto;
+    padding: 10px;
+    border-bottom: 1px solid #e6e6e6;
+}
+.panel-user-found .panel-user-img {
+    text-align: center;
+    background: #484848;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    float: left;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #e6e6e6;
+}
+.panel-user-img span {
+    font-size: 16px;
+    margin: 10px 0 0 0;
+    color: #A9A9A9;
+}
+.panel-user-found p {
+    margin: 10px 0 0 10px;
+    float: left;
+    color: #222222;
+}
+.panel-user-found p:hover {
+    color: #8c8c8c;
+}
+.not-found {
+    text-align: center;
+    margin: 10px auto 10px auto;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e6e6e6;
+}

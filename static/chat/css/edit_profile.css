@@ -1,0 +1,109 @@
+.edit-profile {
+    min-width: 200px;
+    background: #262626;
+    margin: auto auto 20px auto;
+    width: 100%;
+    max-width: 600px;
+    border: 2px solid #111111;
+    color: #ffffff;
+    border-radius: 3px;
+}
+.edit-profile table {
+    width: 100%;
+    font-size: 16px;
+}
+.edit-profile select {
+    background: #e6e6e6;
+    color: #484848;
+    border-radius: 2px;
+    border: 1.5px solid #111111;
+}
+.edit-profile th:first-child {
+    width: 30%;
+    border-right: 1px solid #111111;
+}
+.edit-profile th {
+    border-bottom: 1px solid #111111;
+    padding: 10px;
+    max-width: 100px;
+    word-wrap: break-word;
+}
+.edit-profile textarea {
+    background: #e6e6e6;
+    width: 100%;
+    resize: none;
+    color: #484848;
+    border-radius: 2px;
+    border: 1.5px solid #111111;
+    padding-left: 5px;
+}
+.edit-profile textarea::placeholder {
+    color: #A9A9A9;
+}
+input {
+    background: #e6e6e6;
+    color: #484848;
+    width: 100%;
+    border-radius: 2px;
+    border: 1.5px solid #111111;
+    height: 35px;
+    padding-left: 5px;
+}
+input::placeholder {
+    font-size: 12px;
+    color: #A9A9A9;
+}
+input::-ms-clear {
+   display: none;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button,
+input[type=date]::-webkit-inner-spin-button,
+input[type=date]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin:0;
+}
+input[type=number],
+input[type=date] {
+  -moz-appearance: textfield;
+}
+input[type=submit] {
+    width: 30%;
+    height: 35px;
+    border: 1.5px solid #111111;
+    border-radius: 2px;
+    margin: 20px auto 20px 35%;
+    outline: none;
+    background: #262626;
+    color: #ffffff;
+    -webkit-transition: background .2s ease;
+    -moz-transition: background .2s ease;
+    -o-transition: background .2s ease;
+}
+input[type=submit]:hover {
+    color: #111111;
+    background: #A9A9A9;
+}
+/*input[type="date"]:invalid+span:after {
+    content: '✖';
+    padding-left: 5px;
+    color: red;
+}
+
+input[type="date"]:valid+span:after {
+    content: '✓';
+    padding-left: 5px;
+    color: lawngreen;
+}*/
+
+@keyframes animate {
+    0% {
+        color: lightblue;
+    }
+    50% {
+        color: #1d1d1d;
+    }
+    100% {
+        color: lightblue;
+    }
+}

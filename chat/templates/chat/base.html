@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/commons/5/5c/Telegram_Messenger.png" type="image/png">
+    <title>{% block title %}Main{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'chat/css/base.css' %}" />
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Satisfy" />
+    <script type="text/javascript" src="{% static 'chat/js/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'chat/js/bootstrap.js' %}"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div id="page-wrapper">
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{% url 'index' %}">Messenger</a>
+                </div>
+                {% if request.user.is_active %}
+                    <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li class="{% block chat_active %}{% endblock %}">
+                                <a href="{% url 'chat' %}">
+                                    <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;
+                                    Chat
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav">
+                            <li class="{% block people_active %}{% endblock %}">
+                                <a href="{% url 'people' %}">
+                                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;
+                                    People
+                                </a>
+                            </li>
+                        </ul>
+                        {% if request.user.is_superuser %}
+                            <ul class="nav navbar-nav">
+                                <li>
+                                    <a target="_blank" href="/admin/">
+                                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;
+                                    Admin Panel
+                                    </a>
+                                </li>
+                            </ul>
+                        {% endif %}
+                        <div id="panel-search">
+                            <div class="navbar-form navbar-left">
+                                <input class="panel-search-field" id="panel-search-field" placeholder="Search...">
+                                <button class="panel-search-btn" id="panel-search-btn">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                                <div class="panel-search-result">
+                                    <div class="panel-search-result-text" id="panel-search-result"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <a href="{% url 'logout' %}">
+                                    <span class="glyphicon glyphicon-off"></span>&nbsp;
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="{% block user_profile %}{% endblock %}">
+                                <a href="{% url 'user_profile' %}">
+                                    <span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;
+                                    {{ user.username }}
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="{% block edit_profile_active %}{% endblock %}">
+                                <a href="{% url 'edit_profile' %}">
+                                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;
+                                    Edit profile
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="{% block register_active %}{% endblock %}">
+                            <a href="{% url 'register' %}">
+                                <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>&nbsp;
+                                Sign up
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="{% block login_active %}{% endblock %}">
+                            <a href="{% url 'login_user' %}">
+                                <span class="glyphicon glyphicon-fire" aria-hidden="true"></span>&nbsp;
+                                Login
+                            </a>
+                        </li>
+                    </ul>
+                {% endif %}
+            </div>
+        </nav>
+        {% block body %}{% endblock %}
+        <br>
+    </div>
+    <div class="footer">&copy; 2017 - Yuriy Lisovskiy</div>
+    {% if user.id %}
+        <script type="text/javascript">
+            var user_id_global = {{ user.id }};
+        </script>
+    {% endif %}
+    <script type="text/javascript" src="{% static 'chat/js/particles.js' %}"></script>
+    <script type="text/javascript" src="{% static 'chat/js/particles_config.js' %}"></script>
+    <script type="text/javascript" src="{% static 'chat/js/base.js' %}"></script>
+</body>
+</html>

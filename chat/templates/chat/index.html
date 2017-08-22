@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% extends 'chat/base.html' %}
+    {% load static %}
+    {% block title %}Messenger{% endblock %}
+</head>
+<body>
+    {% block body %}
+        <link rel="stylesheet" type="text/css" href="{% static 'chat/css/index.css' %}">
+        {% if response_msg %}
+            <div class="alert alert-success alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+                <strong>SUCCESS: </strong>{{ response_msg }}
+            </div>
+        {% endif %}
+        <div class="content">
+            <div class="left">
+                <div class="site-description">
+                    <h3>Site Description</h3>
+                </div>
+            </div>
+            <div class="right">
+                <div class="contacts">
+                    <h3>Contacts</h3>
+                    <table>
+                        <tr>
+                            <th>Support:</th>
+                            <th>
+                                <a target="_blank" href="https://mail.google.com/mail/?view=cm&fs=1&to=mymessengerhelp@gmail.com">
+                                Messenger
+                                </a>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Administrator:</th>
+                            <th>
+                                <a target="_blank" href="https://mail.google.com/mail/?view=cm&fs=1&to=yuralisovskiy98@gmail.com">
+                                    Yuriy Lisovskiy
+                                </a>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+</body>
+</html>

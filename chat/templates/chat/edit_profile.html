@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% extends 'chat/base.html' %}
+    {% load static %}
+    {% block title %}Edit profile{% endblock %}
+    {% block edit_profile_active %}active{% endblock %}
+</head>
+<body>
+    {% block body %}
+        <link rel="stylesheet" href="{% static 'chat/css/edit_profile.css' %}">
+        {% if response_msg %}
+            <div class="alert alert-success alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+                <strong>SUCCESS: </strong>{{ response_msg }}
+            </div>
+        {% endif %}
+        <div class="edit-profile">
+            <form action="" method="post">
+                {% csrf_token %}
+                <table>
+                    <tr>
+                        <th><p>First name:</p></th>
+                        <th><input placeholder="Your first name..." name="first_name" id="first_name" required></th>
+                    </tr>
+                    <tr>
+                        <th><p>Last name:</p></th>
+                        <th><input placeholder="Your last name..." name="last_name" id="last_name" required></th>
+                    </tr>
+                    <tr>
+                        <th><p>City:</p></th>
+                        <th><input placeholder="Your current city..." name="city" id="city"></th>
+                    </tr>
+                    <tr>
+                        <th><p>Country:</p></th>
+                        <th><input placeholder="Your current country..." name="country" id="country"></th>
+                    </tr>
+                    <tr>
+                        <th><p>Birthday:</p></th>
+                        <th>
+                            <input type="date" min="1950-01-01" name="birthday" id="birthday">
+                        </th>
+                    </tr>
+                    <tr>
+                        <th><p>Gender:</p></th>
+                        <th>
+                            <select id="gender" name="gender" required>
+                                <option></option>
+                                <option>Male</option>
+                                <option>Female</option>
+                            </select>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th><p>Education:</p></th>
+                        <th><input placeholder="Your place of education..." name="education" id="education"></th>
+                    </tr>
+                    <tr>
+                        <th><p>Phone:</p></th>
+                        <th><input placeholder="Your mobile number..." oninput="this.value=this.value.replace(/[^0-9]/g,'');" name="mobile_number" id="mobile_number" maxlength="10"></th>
+                    </tr>
+                    <tr>
+                        <th><p>About me:</p></th>
+                        <th><textarea placeholder="Your short description..." name="about_me" id="about_me"></textarea></th>
+                    </tr>
+                </table>
+                <input type="submit" value="Save" id="save">
+            </form>
+        </div>
+        <script type="text/javascript">
+            var first_name = "{{ user_data.first_name }}";
+            var last_name = "{{ user_data.last_name }}";
+            var status = "{{ user_data.user_status }}";
+            var city = "{{ user_data.user_city }}";
+            var country = "{{ user_data.user_country }}";
+            var b_day = "{{ user_data.user_birthday_day }}";
+            var b_month = "{{ user_data.user_birthday_month }}";
+            var b_year = "{{ user_data.user_birthday_year }}";
+            var gender = "{{ user_data.user_gender }}";
+            var education = "{{ user_data.user_education }}";
+            var mobile = "{{ user_data.user_mobile_number }}";
+            var about = "{{ user_data.user_about_me }}";
+        </script>
+        <script type="text/javascript" src="{% static 'chat/js/edit_profile.js' %}"></script>
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% extends 'chat/base.html' %}
+    {% load static %}
+    {% block title %}Chat{% endblock %}
+    {% block chat_active %}active{% endblock %}
+</head>
+<body>
+    {% block body %}
+        <link rel="stylesheet" type="text/css" href="{% static 'chat/css/chat.css' %}">
+        <div class="chatbox">
+            {% if all_chat_rooms %}
+                <div class="chat-rooms" id="chat-rooms">
+                    {% for ch_room in all_chat_rooms %}
+                        {% if ch_room.author_id == user.id %}
+                            <button name="{{ ch_room.friend.id }}" class="user-icon" id="chat-room-{{ ch_room.friend_id }}" style="background-image: url({{ ch_room.logo.url }})"></button>
+                        {% endif %}
+                        <div class="popup-chat-room" id="popup-chat-room">
+                            <input type="button" id="delete-dialog" class="delete-dialog" value="Delete this dialog?">
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="chat-area">
+                <div class="chatlogs" id="chatlogs">
+                    <div id="messages">
+                        <p class="not-found">Chat</p>
+                    </div>
+                </div>
+                <form class="chat-form" name="message-form" id="message-form" action="" method="post">
+                    <textarea title="message" form="message-form" name="message" id="message" placeholder="Type a message..." autofocus></textarea>
+                    <input type="submit" value="Send" name="send" id="send">
+                </form>
+            </div>
+        </div>
+        <script type="text/javascript">
+            var global_var_current_user = '{{ user.username }}';
+        </script>
+        <script type="text/javascript" src="{% static 'chat/js/chat.js' %}"></script>
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% extends 'chat/base.html' %}
+    {% load static %}
+    {% block title %}Login{% endblock %}
+    {% block login_active %}active{% endblock %}
+</head>
+<body>
+    {% block body %}
+        <link rel="stylesheet" type="text/css" href="{% static 'chat/css/login_register_style.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'chat/css/bootstrap_social.css' %}">
+        <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css">
+        {% if error_message %}
+            <div class="alert alert-danger alert-dismissable">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+                <strong>Error: </strong>{{ error_message }}
+            </div>
+        {% endif %}
+        <div class="title"><h1>Login</h1></div>
+        <div class="content-login">
+            <div class="container">
+                <div class="form-box">
+                    <form action="{% url 'login_user'%}" method="post">
+                        {% csrf_token %}
+                        <p>Username:</p>
+                        <div class="inner-addon left-addon">
+                            <i class="glyphicon glyphicon-user"></i>
+                            <input placeholder="Username" maxlength="42" name="username" type="text" required>
+                        </div>
+                        <div>
+                            <p>Password:</p>
+                            <div class="inner-addon left-addon">
+                                <i class="glyphicon glyphicon-lock"></i>
+                                <input placeholder="Password" maxlength="66" name="password" type="password" required>
+                            </div>
+                        </div>
+                        <button class="login-register-btn">Login</button>
+                    </form>
+                    <a href="{% url 'register' %}">Don't have an account?</a>
+                    <div class="other-login-methods">
+                        <button id="google-login" title="Login with Google+" class="btn login-social btn-social-icon btn-google">
+                            <span class="fa fa-google-plus"></span>
+                        </button>
+                        <button id="facebook-login" title="Login with Facebook" class="btn login-social btn-social-icon btn-facebook">
+                            <span class="fa fa-facebook"></span>
+                        </button>
+                        <button id="twitter-login" title="Login with Twitter" class="btn login-social btn-social-icon btn-twitter">
+                            <span class="fa fa-twitter"></span>
+                        </button>
+                        <button id="vk-login" title="Login with Vkontakte" class="btn login-social btn-social-icon btn-vk">
+                            <span class="fa fa-vk"></span>
+                        </button>
+                    </div>>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" href="{% static 'chat/js/login.js' %}"></script>
+    {% endblock %}
+</body>
+</html>
