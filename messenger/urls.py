@@ -11,7 +11,7 @@ admin.autodiscover()
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^messenger/', include('chat.urls')),
-    url(r'^about/$', views.index, name='index'),
+    url(r'^/$', views.index, name='index'),
     url(r'^chat_manager/$', views.ChatManager.as_view()),
     url(r'^send_email/$', views.send_email),
 ]
