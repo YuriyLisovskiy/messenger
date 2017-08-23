@@ -14,7 +14,7 @@ SECRET_KEY = 'drl@xbez3ez3+-l(npy5r*ku2z4%7lh4@p_v9y=-lh1fg+a4$6'
 #DEBUG = True
 DEBUG = False
 
-ALLOWED_HOSTS = ['192.168.1.103', '127.0.0.1']
+ALLOWED_HOSTS = ['35.156.217.34', '127.0.0.1']
 
 AUTH_PROFILE_MODULE = 'chat.UserProfile'
 
