@@ -151,16 +151,40 @@ def user_profile_edit(request):
 
 class ChatManager(APIView):
 
+    def create_chat_room(self, author, friend, author_id, friend_id, logo):
+        chat_room = ChatRoom.objects.create(
+            author=author,
+            friend=friend,
+            author_id=author_id,
+            friend_id=friend_id,
+            logo=logo
+        )
+        return chat_room
+
+    def create_message(self, chat_room, msg, msg_time, author, author_initials, author_logo, author_id):
+        Message.objects.create(
+            chat_room=chat_room,
+            msg=msg,
+            time=msg_time,
+            author=author,
+            author_fn_ln=author_initials,
+            author_logo=author_logo,
+            author_id=author_id
+        )
+
+    def delete(self, request):
+        if not request.user.is_authenticated:
+            return redirect('login_user')
+        friend_id = request.POST['delete_chat_room']
+        ChatRoom.objects.get(
+            author__id=request.user.id,
+            friend__id=friend_id
+        ).delete()
+        return JsonResponse({'success': 'Chat room has been deleted.'})
+
     def get(self, request):
         if not request.user.is_authenticated:
             return redirect('login_user')
-        if 'delete_chat_room' in request.GET:
-            friend_id = request.GET['delete_chat_room']
-            ChatRoom.objects.get(
-                author__id=request.user.id,
-                friend__id=friend_id
-            ).delete()
-            return JsonResponse({'success': 'Chat room has been deleted.'})
         if 'msgs_amount' in request.GET and 'chat_room_data' in request.GET:
             msgs_am = len(Message.objects.filter(
                 chat_room=ChatRoom.objects.get(
@@ -185,35 +209,36 @@ class ChatManager(APIView):
             return redirect('login_user')
         msg = request.POST['msg']
         if msg != '':
-            time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + str(datetime.now().strftime("%d %b %Y"))[:11]
-            if request.user.first_name:
-                author_fname_lname = request.user.first_name[0] + request.user.last_name[0]
-            else:
-                author_fname_lname = "none"
-            author = request.user.username
-            author_logo = UserProfile.objects.get(username=author).user_logo
-            author_id = str(request.user.id)
-            friend_id = request.POST['friend_id']
-            chat_room = ChatRoom.objects.get(author__id=author_id, friend__id=friend_id)
-            Message.objects.create(
-                chat_room=chat_room,
-                msg=msg,
-                time=time,
-                author=author,
-                author_fn_ln=author_fname_lname,
-                author_logo=author_logo,
-                author_id=author_id
+            msg_time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + str(datetime.now().strftime("%d %b %Y"))[:11]
+            author = UserProfile.objects.get(id=request.user.id)
+            friend = UserProfile.objects.get(id=request.POST['friend_id'])
+            author_fname_lname = author.first_name[0] + author.last_name[0]
+            try:
+                chat_room = ChatRoom.objects.get(author__id=author.id, friend__id=friend.id)
+            except ChatRoom.DoesNotExist:
+                chat_room = self.create_chat_room(author, friend, author.id, friend.id, friend.user_logo)
+            self.create_message(
+                chat_room,
+                msg,
+                msg_time,
+                author.username,
+                author_fname_lname,
+                author.user_logo,
+                author.id
             )
-            if author_id != friend_id:
-                chat_room = ChatRoom.objects.get(author__id=friend_id, friend__id=author_id)
-                Message.objects.create(
-                    chat_room=chat_room,
-                    msg=msg,
-                    time=time,
-                    author=author,
-                    author_fn_ln=author_fname_lname,
-                    author_logo=author_logo,
-                    author_id=author_id
+            if author.id != friend.id:
+                try:
+                    chat_room = ChatRoom.objects.get(author__id=friend.id, friend__id=author.id)
+                except ChatRoom.DoesNotExist:
+                    chat_room = self.create_chat_room(friend, author, friend.id, author.id, author.user_logo)
+                self.create_message(
+                    chat_room,
+                    msg,
+                    msg_time,
+                    author.username,
+                    author_fname_lname,
+                    author.user_logo,
+                    author.id
                 )
             return HttpResponse('Sent', content_type='text/html')
         return HttpResponse(status=400)
@@ -243,97 +268,83 @@ class ChatManager(APIView):
             friend_chat_room = None
         if not author_chat_room and not friend_chat_room:
             if author == friend:
-                chat_room = ChatRoom.objects.create(
-                    author=author,
-                    friend=author,
-                    author_id=author_id,
-                    friend_id=author_id,
-                    logo=author.user_logo
-                )
+                chat_room = self.create_chat_room(author, author, author_id, author_id, author.user_logo)
                 if msg != "":
-                    Message.objects.create(
-                        chat_room=chat_room,
-                        msg=msg,
-                        time=msg_time,
-                        author=author.username,
-                        author_fn_ln=author_initials,
-                        author_logo=author.user_logo,
-                        author_id=author_id
+                    self.create_message(
+                        chat_room,
+                        msg, msg_time,
+                        author.username,
+                        author_initials,
+                        author.user_logo,
+                        author_id
                     )
                 return redirect('chat')
-            chat_room = ChatRoom.objects.create(
-                author=author,
-                friend=friend,
-                author_id=author_id,
-                friend_id=friend_id,
-                logo=friend.user_logo
-            )
+            chat_room = self.create_chat_room(author, friend, author_id, friend_id, friend.user_logo)
             if msg != "":
-                Message.objects.create(
-                    chat_room=chat_room,
-                    msg=msg,
-                    time=msg_time,
-                    author=author.username,
-                    author_fn_ln=author_initials,
-                    author_logo=author.user_logo,
-                    author_id=author_id
+                self.create_message(
+                    chat_room,
+                    msg,
+                    msg_time,
+                    author.username,
+                    author_initials,
+                    author.user_logo,
+                    author_id
                 )
-            chat_room = ChatRoom.objects.create(
-                author=friend,
-                friend=author,
-                author_id=friend_id,
-                friend_id=author_id,
-                logo=author.user_logo
-            )
+            chat_room = self.create_chat_room(friend, author, friend_id, author_id, author.user_logo)
             if msg != "":
-                Message.objects.create(
-                    chat_room=chat_room,
-                    msg=msg,
-                    time=msg_time,
-                    author=author.username,
-                    author_fn_ln=author_initials,
-                    author_logo=author.user_logo,
-                    author_id=author_id
+                self.create_message(
+                    chat_room,
+                    msg,
+                    msg_time,
+                    author.username,
+                    author_initials,
+                    author.user_logo,
+                    author_id
                 )
                 return redirect('chat')
         if msg != "":
             if author_chat_room:
-                Message.objects.create(
-                    chat_room=author_chat_room,
-                    msg=msg,
-                    time=msg_time,
-                    author=author.username,
-                    author_fn_ln=author_initials,
-                    author_logo=author.user_logo,
-                    author_id=author_id
+                self.create_message(
+                    author_chat_room,
+                    msg,
+                    msg_time,
+                    author.username,
+                    author_initials,
+                    author.user_logo,
+                    author_id
                 )
                 if not friend_chat_room:
-                    chat_room = ChatRoom.objects.create(
-                        author=friend,
-                        friend=author,
-                        author_id=friend_id,
-                        friend_id=author_id,
-                        logo=author.user_logo
+                    chat_room = self.create_chat_room(friend, author, friend_id, author_id, author.user_logo)
+                    self.create_message(
+                        chat_room,
+                        msg,
+                        msg_time,
+                        author.username,
+                        author_initials,
+                        author.user_logo,
+                        author_id
                     )
-                    Message.objects.create(
-                        chat_room=chat_room,
-                        msg=msg,
-                        time=msg_time,
-                        author=author.username,
-                        author_fn_ln=author_initials,
-                        author_logo=author.user_logo,
-                        author_id=author_id
+            if friend_chat_room:
+                if author_chat_room != friend_chat_room:
+                    self.create_message(
+                        friend_chat_room,
+                        msg,
+                        msg_time,
+                        author.username,
+                        author_initials,
+                        author.user_logo,
+                        author_id
                     )
-                else:
-                    if author_chat_room != friend_chat_room:
-                        Message.objects.create(
-                            chat_room=friend_chat_room,
-                            msg=msg,
-                            time=msg_time,
-                            author=author.username,
-                            author_fn_ln=author_initials,
-                            author_logo=author.user_logo,
-                            author_id=author_id
+                    if not author_chat_room:
+                        chat_room = self.create_chat_room(author, friend, author_id, friend_id, friend.user_logo)
+                        self.create_message(
+                            chat_room,
+                            msg,
+                            msg_time,
+                            author.username,
+                            author_initials,
+                            author.user_logo,
+                            author_id
                         )
                 return redirect('chat')
             return redirect('chat')
