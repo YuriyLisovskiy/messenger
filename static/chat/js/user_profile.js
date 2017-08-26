@@ -52,7 +52,6 @@ $(document).ready(function () {
     });
     $('#send-message-btn').click(function (e) {
         get_csrf_token();
-        e.preventDefault();
         var chat_room_data = this.name;
         var msg = $.trim($('#msg-area').val());
         if (msg.length !== 0) {
@@ -66,6 +65,7 @@ $(document).ready(function () {
                 cache: false,
                 success: function () {
                     console.log("Message has been sent.");
+                    window.location = "/messenger/chat";
                 },
                 error: function () {
                     console.log("Error occurred while sending message.");
@@ -82,6 +82,7 @@ $(document).ready(function () {
                 cache: false,
                 success: function () {
                     console.log("Message has been sent.");
+                    window.location = "/messenger/chat";
                 },
                 error: function () {
                     console.log("Error occurred while sending message.");
