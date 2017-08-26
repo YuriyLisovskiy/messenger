@@ -11,10 +11,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'drl@xbez3ez3+-l(npy5r*ku2z4%7lh4@p_v9y=-lh1fg+a4$6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 #DEBUG = False
 
-ALLOWED_HOSTS = ['35.156.217.34', '127.0.0.1']
+# If you don't want run the server on localhost, add here your available host(s).
+ALLOWED_HOSTS = ['127.0.0.1']
 
 AUTH_PROFILE_MODULE = 'chat.UserProfile'
 

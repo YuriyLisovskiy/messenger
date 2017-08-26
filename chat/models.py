@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 
 
 class UserProfile(User):
-    user_logo = models.ImageField()
-    user_background_photo = models.ImageField()
+    user_logo = models.ImageField(default='logo_none.png')
+    user_background_photo = models.ImageField(default='background_none.png')
     user_gender = models.CharField(default="", max_length=6)
     user_birthday_day = models.IntegerField(default=0)
     user_birthday_month = models.CharField(default="", max_length=30)
