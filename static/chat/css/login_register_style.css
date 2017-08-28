@@ -13,7 +13,7 @@
 .content-login {
     width: 100%;
     max-width: 430px;
-    height: 450px;
+    height: 420px;
     margin: 0 auto 102px auto;
     opacity: 0.9;
 }
@@ -159,12 +159,4 @@
 }
 #received-code-content {
     display: none;
-}
-.other-login-methods {
-    margin: 20px 0 0 15%;
-    width: 100%;
-}
-.other-login-methods .login-social {
-    padding: 0 20px 15px 20px;
-    margin: 0 5px 0 5px;
 }

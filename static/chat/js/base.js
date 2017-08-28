@@ -21,7 +21,7 @@ $(document).ready(function () {
             get_csrf_token();
             $.ajax({
                 method: 'post',
-                url: '/messenger/search/',
+                url: '/search/',
                 data: {'search': search},
                 cache: false,
                 success: function (response) {
@@ -51,7 +51,7 @@ $(document).ready(function () {
             return "";
         }
         var html = '<div class="panel-user-found">';
-        html += '<a href="/messenger/user/id' + response[key].id + '">';
+        html += '<a href="/user/' + response[key].id + '">';
         if (response[key].user_logo) {
             html += '<div class="panel-user-img" style="background-image: url(' + response[key].user_logo + ')"></div>';
         }

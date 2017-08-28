@@ -12,7 +12,6 @@ SECRET_KEY = 'drl@xbez3ez3+-l(npy5r*ku2z4%7lh4@p_v9y=-lh1fg+a4$6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-#DEBUG = False
 
 # If you don't want run the server on localhost, add here your available host(s).
 ALLOWED_HOSTS = ['127.0.0.1']

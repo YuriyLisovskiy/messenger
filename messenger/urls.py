@@ -10,10 +10,12 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^messenger/', include('chat.urls')),
+    url(r'^', include('chat.urls')),
     url(r'^$', views.index, name='index'),
     url(r'^chat_manager/$', views.ChatManager.as_view()),
     url(r'^send_email/$', views.send_email),
+    url(r'^register/$', views.UserFormView.as_view(), name='register'),
+    url(r'^login/$', views.login_user, name='login')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

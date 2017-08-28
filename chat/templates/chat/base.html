@@ -75,7 +75,7 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li class="{% block user_profile %}{% endblock %}">
-                                <a href="{% url 'user_profile' %}">
+                                <a href="/user/{{ user.id }}">
                                     <span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;
                                     {{ user.username }}
                                 </a>
@@ -101,7 +101,7 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="{% block login_active %}{% endblock %}">
-                            <a href="{% url 'login_user' %}">
+                            <a href="{% url 'login' %}">
                                 <span class="glyphicon glyphicon-fire" aria-hidden="true"></span>&nbsp;
                                 Login
                             </a>

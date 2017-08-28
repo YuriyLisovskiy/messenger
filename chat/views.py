@@ -6,7 +6,6 @@ from django.http import HttpResponse, JsonResponse, Http404
 from .models import Message, PhotoLogo, PhotoBackground, ChatRoom
 from .serializers import MessageSerializer, UserSerializer
 from datetime import datetime
-from rest_framework.views import APIView
 from . import functions
 from .lib import CountryList
 import smtplib
@@ -27,19 +26,20 @@ def chat(request):
             'all_users': all_users,
             'all_chat_rooms': all_chat_rooms
         })
-    return redirect('login_user')
+    return redirect('login')
 
 
-class Profile(APIView):
+class Profile(View):
 
-    def get(self, request):
+    def get(self, request, profile_id):
         if not request.user.is_authenticated:
-            return redirect('login_user')
-        user_profile = UserProfile.objects.get(username=request.user.username)
-        user_logos = PhotoLogo.objects.filter(owner__username=request.user.username)
-        user_backgrounds = PhotoBackground.objects.filter(owner__username=request.user.username)
-        if user_profile.user_country != '':
-            user_profile.user_country = CountryList().get_county(user_profile.user_country)
+            return redirect('login')
+        try:
+            user_profile = UserProfile.objects.get(pk=profile_id)
+        except UserProfile.DoesNotExist:
+            raise Http404("User with id=" + profile_id + " does not exist")
+        user_logos = PhotoLogo.objects.filter(owner__username=user_profile.username)
+        user_backgrounds = PhotoBackground.objects.filter(owner__username=user_profile.username)
         return render(request, "chat/user_profile.html", {
             'user_profile': user_profile,
             'user_logos': user_logos,
@@ -48,7 +48,7 @@ class Profile(APIView):
 
     def post(self, request):
         if not request.user.is_authenticated:
-            return redirect('login_user')
+            return redirect('login')
         user_profile = UserProfile.objects.get(username=request.user.username)
         upload_time = str(datetime.now())[11:16] + "  |  " + str(datetime.now().strftime("%d %b %Y"))[:11]
         if 'logo' in request.FILES:
@@ -68,21 +68,21 @@ class Profile(APIView):
                 upload_time=upload_time
             )
         user_profile.save()
-        return redirect('user_profile')
+        return redirect('/user/' + str(request.user.id))
 
 
 
-class SearchPeople(APIView):
+class SearchPeople(View):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return redirect('login_user')
+            return redirect('login')
         data = UserProfile.objects.all()
         return render(request, "chat/search.html", {'all_users': data})
 
     def post(self, request):
         if not request.user.is_authenticated:
-            return redirect('login_user')
+            return redirect('login')
         keyword = request.POST['search']
         if 'city' in request.POST:
             f_n, l_n = keyword.split()
@@ -111,7 +111,7 @@ class SearchPeople(APIView):
 
 def user_profile_search_result(request, profile_id):
     if not request.user.is_authenticated:
-        return redirect('login_user')
+        return redirect('login')
     try:
         user_profile = UserProfile.objects.get(pk=profile_id)
     except UserProfile.DoesNotExist:
@@ -130,7 +130,7 @@ class EditUserProfile(View):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return redirect('login_user')
+            return redirect('login')
         user = UserProfile.objects.get(username=request.user.username)
         if user.user_country != '':
             user.user_country = self.COUNTRY_LIST.get_county(user.user_country)
@@ -141,7 +141,7 @@ class EditUserProfile(View):
 
     def post(self, request):
         if not request.user.is_authenticated:
-            return redirect('login_user')
+            return redirect('login')
         user = UserProfile.objects.get(username=request.user.username)
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
@@ -176,7 +176,7 @@ class EditUserProfile(View):
         })
 
 
-class ChatManager(APIView):
+class ChatManager(View):
 
     def create_chat_room(self, author, friend, author_id, friend_id, logo):
         chat_room = ChatRoom.objects.create(
@@ -211,7 +211,7 @@ class ChatManager(APIView):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return redirect('login_user')
+            return redirect('login')
         if 'msgs_amount' in request.GET and 'chat_room_data' in request.GET:
             msgs_am = len(Message.objects.filter(
                 chat_room=ChatRoom.objects.get(
@@ -233,7 +233,7 @@ class ChatManager(APIView):
 
     def post(self, request):
         if not request.user.is_authenticated:
-            return redirect('login_user')
+            return redirect('login')
         msg = request.POST['msg']
         if msg != '':
             msg_time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + str(datetime.now().strftime("%d %b %Y"))[:11]
@@ -272,7 +272,7 @@ class ChatManager(APIView):
 
     def put(self, request):
         if not request.user.is_authenticated:
-            return redirect('login_user')
+            return redirect('login')
         author_id, friend_id = request.POST['create_chat_room'].split()
         msg = request.POST['msg']
         author = UserProfile.objects.get(id=author_id)
@@ -380,12 +380,12 @@ class ChatManager(APIView):
 
 def logout_user(request):
     logout(request)
-    return redirect('login_user')
+    return redirect('login')
 
 
 def login_user(request):
     if request.user.is_authenticated:
-        return redirect('user_profile')
+        return redirect('/user/' + str(request.user.id))
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -393,7 +393,7 @@ def login_user(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return redirect('user_profile')
+                return redirect('/user/' + str(request.user.id))
             return render(request, "chat/login_form.html", {'error_message': 'Your account has been disabled'})
         return render(request, "chat/login_form.html", {'error_message': 'Invalid login or password'})
     return render(request, "chat/login_form.html")
@@ -405,13 +405,13 @@ class UserFormView(View):
 
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect('user_profile')
+            return redirect('/user/' + str(request.user.id))
         form = self.form_class(None)
         return render(request, self.template_name, {'form': form})
 
     def post(self, request):
         if request.user.is_authenticated:
-            return redirect('user_profile')
+            return redirect('/user/' + str(request.user.id))
         form = self.form_class(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
@@ -465,7 +465,7 @@ def send_email(request):
         new_email.ehlo()
         new_email.starttls()
         new_email.ehlo()
-        new_email.login("mymessengerhelp@gmail.com", "256432kcb34K")
+        new_email.login("mymessengerhelp@gmail.com", "MyMessengerHe357")
         new_email.sendmail(support_email, [usr_email], message.as_string())
         new_email.quit()
         return JsonResponse({'name': "Code was sent successfully!"})

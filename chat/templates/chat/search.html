@@ -20,7 +20,7 @@
                     {% for usr in all_users %}
                         {% if usr.id != user.id %}
                             <div class="user-found">
-                                <a href="/messenger/user/id{{ usr.id }}">
+                                <a href="/user/{{ usr.id }}">
                                         {% if usr.user_logo %}
                                             <div class="user-img" style="background-image: url({{ usr.user_logo.url }})"></div>
                                         {% else %}

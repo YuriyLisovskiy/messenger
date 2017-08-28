@@ -34,16 +34,19 @@
     color: #ffffff;
     padding: 20px;
 }
+.contacts table {
+    margin-bottom: 50px;
+}
 .contacts h3 {
     text-align: center;
     color: #ffffff;
     margin-bottom: 20px;
 }
-.contacts a {
+.contacts table a {
     text-decoration: none;
     color: #A9A9A9;
 }
-.contacts a:hover {
+.contacts table a:hover {
     color: #ffffff;
 }
 .contacts th {
@@ -52,4 +55,16 @@
 .site-description {
     text-align: center;
     color: #ffffff;
+}
+.other-login-methods {
+    margin: 20px 0 0 15%;
+    width: 100%;
+}
+.other-login-methods .login-social {
+    padding: 0 20px 15px 20px;
+    margin: 0 5px 0 5px;
+    float: left;
+}
+.login-social {
+    background: blue;
 }

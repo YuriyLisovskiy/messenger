@@ -12,7 +12,7 @@ $(document).ready(function () {
             if (!$('#check-parameters').prop('checked')) {
                 $.ajax({
                     method: 'post',
-                    url: '/messenger/search/',
+                    url: '/search/',
                     data: {'search': search},
                     cache: false,
                     success: function (response) {
@@ -41,7 +41,7 @@ $(document).ready(function () {
                 if (city && country && birthday && gender) {
                     $.ajax({
                         method: 'post',
-                        url: '/messenger/search/',
+                        url: '/search/',
                         data: {
                             'search': search,
                             'city': city,
@@ -80,7 +80,7 @@ $(document).ready(function () {
             return "";
         }
         var html = '<div class="user-found">';
-        html += '<a href="/messenger/user/id' + response[key].id + '">';
+        html += '<a href="/user/' + response[key].id + '">';
         if (response[key].user_logo) {
             html += '<div class="user-img" style="background-image: url(' + response[key].user_logo + ')"></div>';
         }
