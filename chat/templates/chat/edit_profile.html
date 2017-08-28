@@ -36,7 +36,14 @@
                     </tr>
                     <tr>
                         <th><p>Country:</p></th>
-                        <th><input placeholder="Your current country..." name="country" id="country"></th>
+                        <th>
+                            <select class="select-country" id="country" name="country">
+                                <option></option>
+                                {% for country in country_list %}
+                                    <option>{{ country }}</option>
+                                {% endfor %}
+                            </select>
+                        </th>
                     </tr>
                     <tr>
                         <th><p>Birthday:</p></th>
@@ -47,7 +54,7 @@
                     <tr>
                         <th><p>Gender:</p></th>
                         <th>
-                            <select id="gender" name="gender" required>
+                            <select id="gender" name="gender">
                                 <option></option>
                                 <option>Male</option>
                                 <option>Female</option>

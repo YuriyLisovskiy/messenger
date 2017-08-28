@@ -8,6 +8,7 @@ from .serializers import MessageSerializer, UserSerializer
 from datetime import datetime
 from rest_framework.views import APIView
 from . import functions
+from .lib import CountryList
 import smtplib
 from email.mime.text import MIMEText
 
@@ -37,6 +38,8 @@ class Profile(APIView):
         user_profile = UserProfile.objects.get(username=request.user.username)
         user_logos = PhotoLogo.objects.filter(owner__username=request.user.username)
         user_backgrounds = PhotoBackground.objects.filter(owner__username=request.user.username)
+        if user_profile.user_country != '':
+            user_profile.user_country = CountryList().get_county(user_profile.user_country)
         return render(request, "chat/user_profile.html", {
             'user_profile': user_profile,
             'user_logos': user_logos,
@@ -113,14 +116,33 @@ def user_profile_search_result(request, profile_id):
         user_profile = UserProfile.objects.get(pk=profile_id)
     except UserProfile.DoesNotExist:
         raise Http404("User with id=" + profile_id + " does not exist")
-    return render(request, "chat/user_profile.html", {'user_profile': user_profile})
+    user_logos = PhotoLogo.objects.filter(owner__username=user_profile.username)
+    user_backgrounds = PhotoBackground.objects.filter(owner__username=user_profile.username)
+    return render(request, "chat/user_profile.html", {
+        'user_profile': user_profile,
+        'user_logos': user_logos,
+        'user_backgrounds': user_backgrounds
+    })
 
 
-def user_profile_edit(request):
-    if not request.user.is_authenticated:
-        return redirect('login_user')
-    user = UserProfile.objects.get(username=request.user.username)
-    if request.POST:
+class EditUserProfile(View):
+    COUNTRY_LIST = CountryList()
+
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect('login_user')
+        user = UserProfile.objects.get(username=request.user.username)
+        if user.user_country != '':
+            user.user_country = self.COUNTRY_LIST.get_county(user.user_country)
+        return render(request, "chat/edit_profile.html", {
+            'user_data': user,
+            'country_list': self.COUNTRY_LIST.country_list()
+        })
+
+    def post(self, request):
+        if not request.user.is_authenticated:
+            return redirect('login_user')
+        user = UserProfile.objects.get(username=request.user.username)
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
         city = request.POST['city']
@@ -133,7 +155,10 @@ def user_profile_edit(request):
         user.first_name = first_name
         user.last_name = last_name
         user.user_city = city
-        user.user_country = country
+        if country != '':
+            user.user_country = self.COUNTRY_LIST.get_iso_code(country)
+        else:
+            user.user_country = country
         user.user_birthday_day = birthday[8:]
         user.user_birthday_month = birthday[5:7]
         user.user_birthday_year = birthday[:4]
@@ -142,11 +167,13 @@ def user_profile_edit(request):
         user.user_mobile_number = mobile
         user.user_about_me = about
         user.save()
+        if user.user_country != '':
+            user.user_country = self.COUNTRY_LIST.get_county(user.user_country)
         return render(request, "chat/edit_profile.html", {
             'user_data': user,
+            'country_list': self.COUNTRY_LIST.country_list(),
             'response_msg': 'Profile changes has been saved.'
         })
-    return render(request, "chat/edit_profile.html", {'user_data': user})
 
 
 class ChatManager(APIView):

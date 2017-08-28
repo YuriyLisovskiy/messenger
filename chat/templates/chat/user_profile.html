@@ -10,8 +10,8 @@
     {% block body %}
         <link rel="stylesheet" href="{% static 'chat/css/user_profile.css' %}">
         <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{% static 'chat/css/popup.css' %}">
         {% if user_profile.username == user.username %}
-            <link rel="stylesheet" href="{% static 'chat/css/popup.css' %}">
             <div class="popup" data-popup="popup-logo">
                 <div class="popup-inner">
                     <h3 class="title">Change main photo</h3>
@@ -44,39 +44,39 @@
                     </div>
                 </div>
             </div>
-            <div class="popup" data-popup="popup-all-logos">
-                <div class="popup-inner">
-                    <div class="display-container">
-                        {% for logo in user_logos %}
-                            <img class="slide-item-logo slide-image" src="{{ logo.photo.url }}" title="{{ logo.upload_time }}">
-                        {% endfor %}
-                        <label class="btn btn-default slide-btn">
-                                &#10094;<input class="slide" id="prev-logo" type="button">
-                        </label>
-                        <label class="btn btn-default slide-btn">
-                                &#10095;<input class="slide" id="next-logo" type="button">
-                        </label>
-                    </div>
-                    <a class="popup-close" data-popup-close="popup-all-logos" href="#">✖</a>
-                </div>
-            </div>
-            <div class="popup" data-popup="popup-all-bgs">
-                <div class="popup-inner">
-                    <div class="display-container">
-                        {% for background in user_backgrounds %}
-                            <img class="slide-item-bg slide-image" src="{{ background.photo.url }}" title="{{ background.upload_time }}">
-                        {% endfor %}
-                        <label class="btn btn-default slide-btn">
-                                &#10094;<input class="slide" id="prev-bg" type="button">
-                        </label>
-                        <label class="btn btn-default slide-btn">
-                                &#10095;<input class="slide" id="next-bg" type="button">
-                        </label>
-                    </div>
-                    <a class="popup-close" data-popup-close="popup-all-bgs" href="#">✖</a>
-                </div>
-            </div>
         {% endif %}
+        <div class="popup" data-popup="popup-all-logos">
+            <div class="popup-inner">
+                <div class="display-container">
+                    {% for logo in user_logos %}
+                        <img class="slide-item-logo slide-image" src="{{ logo.photo.url }}" title="{{ logo.upload_time }}">
+                    {% endfor %}
+                    <label class="btn btn-default slide-btn">
+                        &#10094;<input class="slide" id="prev-logo" type="button">
+                    </label>
+                    <label class="btn btn-default slide-btn">
+                        &#10095;<input class="slide" id="next-logo" type="button">
+                    </label>
+                </div>
+                <a class="popup-close" data-popup-close="popup-all-logos" href="#">✖</a>
+            </div>
+        </div>
+        <div class="popup" data-popup="popup-all-bgs">
+            <div class="popup-inner">
+                <div class="display-container">
+                    {% for background in user_backgrounds %}
+                        <img class="slide-item-bg slide-image" src="{{ background.photo.url }}" title="{{ background.upload_time }}">
+                    {% endfor %}
+                    <label class="btn btn-default slide-btn">
+                        &#10094;<input class="slide" id="prev-bg" type="button">
+                    </label>
+                    <label class="btn btn-default slide-btn">
+                        &#10095;<input class="slide" id="next-bg" type="button">
+                    </label>
+                </div>
+                <a class="popup-close" data-popup-close="popup-all-bgs" href="#">✖</a>
+            </div>
+        </div>
         <div class="container">
             <div class="user-profile">
                 {% if user_profile.user_background_photo %}
