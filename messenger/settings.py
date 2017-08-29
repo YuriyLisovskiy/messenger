@@ -23,6 +23,7 @@ AUTH_PROFILE_MODULE = 'chat.UserProfile'
 INSTALLED_APPS = [
     'rest_framework',
     'chat.apps.ChatConfig',
+    'music.apps.MusicConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -44,6 +44,14 @@
                                 </a>
                             </li>
                         </ul>
+                        <ul class="nav navbar-nav">
+                            <li class="{% block music_active %}{% endblock %}">
+                                <a href="{% url 'music' %}">
+                                    <span class="glyphicon glyphicon-music" aria-hidden="true"></span>&nbsp;
+                                    Music
+                                </a>
+                            </li>
+                        </ul>
                         {% if request.user.is_superuser %}
                             <ul class="nav navbar-nav">
                                 <li>
