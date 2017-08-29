@@ -28,22 +28,6 @@
                     </div>
                 </div>
             </div>
-            <div class="popup" data-popup="popup-bg">
-                <div class="popup-inner">
-                    <h3 class="title">Change background photo</h3>
-                    <div class="change-photo-form">
-                        <img class="uploaded-photo" id="uploaded-photo-bg" src="{{ user_profile.user_background_photo.url }}">
-                        <form method="post" enctype="multipart/form-data" id="change-photo-form">
-                            {% csrf_token %}
-                            <label class="btn btn-default btn-file">
-                                Upload photo <input type="file" style="display: none;" id="img-input-bg" name="background">
-                            </label>
-                            <button id="btn-save-bg" class="btn btn-default btn-file">Save</button>
-                        </form>
-                        <a class="popup-close" data-popup-close="popup-bg" href="#">✖</a>
-                    </div>
-                </div>
-            </div>
         {% endif %}
         <div class="popup" data-popup="popup-all-logos">
             <div class="popup-inner">
@@ -61,49 +45,8 @@
                 <a class="popup-close" data-popup-close="popup-all-logos" href="#">✖</a>
             </div>
         </div>
-        <div class="popup" data-popup="popup-all-bgs">
-            <div class="popup-inner">
-                <div class="display-container">
-                    {% for background in user_backgrounds %}
-                        <img class="slide-item-bg slide-image" src="{{ background.photo.url }}" title="{{ background.upload_time }}">
-                    {% endfor %}
-                    <label class="btn btn-default slide-btn">
-                        &#10094;<input class="slide" id="prev-bg" type="button">
-                    </label>
-                    <label class="btn btn-default slide-btn">
-                        &#10095;<input class="slide" id="next-bg" type="button">
-                    </label>
-                </div>
-                <a class="popup-close" data-popup-close="popup-all-bgs" href="#">✖</a>
-            </div>
-        </div>
-        <div class="container">
-            <div class="user-profile">
-                {% if user_profile.user_background_photo %}
-                    <div class="photo-bg" style="background-image: url({{ user_profile.user_background_photo.url }});">
-                        {% if user_profile.username == user.username %}
-                            <button data-popup-open="popup-bg" class="add-photo background">
-                                <span class="glyphicon glyphicon-camera"></span>&nbsp;
-                                Edit background
-                            </button>
-                        {% endif %}
-                        {% if user_backgrounds %}
-                            <button data-popup-open="popup-all-bgs" class="add-photo background">
-                                <span class="glyphicon glyphicon-camera"></span>&nbsp;
-                                Photos
-                            </button>
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <div class="photo-bg">
-                        {% if user_profile.username == user.username %}
-                            <button data-popup-open="popup-bg" class="add-photo background">
-                                <span class="glyphicon glyphicon-camera"></span>&nbsp;
-                                Add background
-                            </button>
-                        {% endif %}
-                    </div>
-                {% endif %}
+        <div class="content">
+            <div class="left-part">
                 {% if user_profile.user_logo %}
                     <div class="photo-logo" style="background-image: url({{ user_profile.user_logo.url }});">
                         {% if user_profile.username == user.username %}
@@ -120,7 +63,7 @@
                         {% endif %}
                     </div>
                 {% else %}
-                    <div class="photo-logo" style="background-image: url({% static 'chat/images/logo_none.png' %});">
+                    <div class="" style="background-image: url({% static 'chat/images/logo_none.png' %});">
                         {% if user_profile.username == user.username %}
                             <button data-popup-open="popup-logo" class="add-photo logo">
                                 <span class="glyphicon glyphicon-camera"></span>&nbsp;
@@ -129,71 +72,88 @@
                         {% endif %}
                     </div>
                 {% endif %}
-                <div class="user-profile-text">
-                    <h1 class="user-profile-name">{{ user_profile.first_name }} {{ user_profile.last_name }}</h1>
+                <div class="info">
+                    <h1 class="">{{ user_profile.first_name }} {{ user_profile.last_name }}</h1>
+                    {% if user_profile.username %}
+                        <h3 class="">{{ user_profile.username }}</h3>
+                    {% endif %}
+                    <div class="send-message">
+                        <form name="create-chat-room" method="post">
+                            {% csrf_token %}
+                            <input name="data" value="{{ user.id }} {{ user_profile.id }}" type="hidden">
+                            <textarea name="message" id="msg-area" class="msg-area" placeholder="Type a message..."></textarea>
+                            <input id="send-message-btn" class="send-message-btn" type="submit" value="Send message">
+                        </form>
+                    </div>
+                    {% if user_profile.username == user.username %}
+                        <div class="edit-profile">
+                            <a href="{% url 'edit_profile' %}">
+                                <input type="button" value="Edit profile">
+                            </a>
+                        </div>
+                    {% endif %}
                 </div>
-                <form name="create-chat-room">
-                    {% csrf_token %}
-                    <textarea id="msg-area" class="msg-area" placeholder="Type a message..."></textarea>
-                    <input name="{{ user.id }} {{ user_profile.id }}" id="send-message-btn" class="send-message-btn" type="submit" value="Send message">
-                </form>
             </div>
-        </div>
-        <div id="user-profile-info" class="user-profile-info">
-            <input class="hide-show-btn" id="hide-show-user-profile-info" type="button" value="Hide user info">
-            <div class="content">
-                <table>
-                    {% if user_profile.user_city %}
-                    <tr>
-                        <th>City:</th>
-                        <th>{{ user_profile.user_city }}</th>
-                    </tr>
-                    {% endif %}
-                    {% if user_profile.user_country %}
-                    <tr>
-                        <th>Country:</th>
-                        <th>{{ user_profile.user_country }}</th>
-                    </tr>
-                    {% endif %}
-                    {% if user_profile.user_birthday_day != 0 and user_profile.user_birthday_month %}
-                    <tr>
-                        <th>Birthday:</th>
-                        <th>
-                            {{ user_profile.user_birthday_day }}.{{ user_profile.user_birthday_month }}.{{ user_profile.user_birthday_year }}
-                        </th>
-                    </tr>
-                    {% endif %}
-                    {% if user_profile.user_gender %}
-                    <tr>
-                        <th>Gender:</th>
-                        <th>{{ user_profile.user_gender }}</th>
-                    </tr>
-                    {% endif %}
-                    {% if user_profile.user_education %}
-                    <tr>
-                        <th>Education:</th>
-                        <th>{{ user_profile.user_education }}</th>
-                    </tr>
-                    {% endif %}
-                    {% if user_profile.user_mobile_number %}
-                    <tr>
-                        <th>Mobile number:</th>
-                        <th>+38{{ user_profile.user_mobile_number }}</th>
-                    </tr>
-                    {% endif %}
-                    {% if user_profile.email %}
-                    <tr>
-                        <th>Email:</th>
-                        <th>{{ user_profile.email }}</th>
-                    </tr>
-                    {% endif %}
+            <div class="right-part">
+                <div class="about">
+                    <p class="title">About</p>
                     {% if user_profile.user_about_me %}
-                    <tr>
-                        <th>About me:</th>
-                        <th>{{ user_profile.user_about_me }}</th>
-                    </tr>
+                        <p class="data">{{ user_profile.user_about_me }}</p>
+                    {% else %}
+                        <p class="data-none">Nothing to display</p>
                     {% endif %}
-                </table>
+                </div>
+                <div class="info">
+                    <p class="title">Info</p>
+                    <div class="data">
+                        <table>
+                            {% if user_profile.user_city %}
+                                <tr>
+                                    <th>City:</th>
+                                    <th>{{ user_profile.user_city }}</th>
+                                </tr>
+                            {% endif %}
+                            {% if user_profile.user_country %}
+                                <tr>
+                                    <th>Country:</th>
+                                    <th>{{ user_profile.user_country }}</th>
+                                </tr>
+                            {% endif %}
+                            {% if user_profile.user_birthday_day != 0 and user_profile.user_birthday_month %}
+                                <tr>
+                                    <th>Birthday:</th>
+                                    <th>
+                                        {{ user_profile.user_birthday_day }}.{{ user_profile.user_birthday_month }}, {{ user_profile.user_birthday_year }}
+                                    </th>
+                                </tr>
+                            {% endif %}
+                            {% if user_profile.user_gender %}
+                                <tr>
+                                    <th>Gender:</th>
+                                    <th>{{ user_profile.user_gender }}</th>
+                                </tr>
+                            {% endif %}
+                            {% if user_profile.user_education %}
+                                <tr>
+                                    <th>Education:</th>
+                                    <th>{{ user_profile.user_education }}</th>
+                                </tr>
+                            {% endif %}
+                            {% if user_profile.user_mobile_number %}
+                                <tr>
+                                    <th>Mobile number:</th>
+                                    <th>+38{{ user_profile.user_mobile_number }}</th>
+                                </tr>
+                            {% endif %}
+                            {% if user_profile.email %}
+                                <tr>
+                                    <th>Email:</th>
+                                    <th>{{ user_profile.email }}</th>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
         <script type="text/javascript" src="{% static 'chat/js/user_profile_slider.js' %}"></script>

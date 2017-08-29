@@ -12,6 +12,7 @@ $(document).ready(function () {
         chat_room_data = this.name;
         $('#delete-dialog').click( function () {
             get_csrf_token();
+            console.log(chat_room_data);
             clearInterval(ajax_request_interval);
             $.ajax({
                 method: 'delete',

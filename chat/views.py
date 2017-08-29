@@ -10,6 +10,7 @@ from . import functions
 from .lib import CountryList
 import smtplib
 from email.mime.text import MIMEText
+from rest_framework.views import APIView
 
 
 def index(request):
@@ -31,6 +32,27 @@ def chat(request):
 
 class Profile(View):
 
+    def create_chat_room(self, author, friend, author_id, friend_id, logo):
+        chat_room = ChatRoom.objects.create(
+            author=author,
+            friend=friend,
+            author_id=author_id,
+            friend_id=friend_id,
+            logo=logo
+        )
+        return chat_room
+
+    def create_message(self, chat_room, msg, msg_time, author, author_initials, author_logo, author_id):
+        Message.objects.create(
+            chat_room=chat_room,
+            msg=msg,
+            time=msg_time,
+            author=author,
+            author_fn_ln=author_initials,
+            author_logo=author_logo,
+            author_id=author_id
+        )
+
     def get(self, request, profile_id):
         if not request.user.is_authenticated:
             return redirect('login')
@@ -38,38 +60,135 @@ class Profile(View):
             user_profile = UserProfile.objects.get(pk=profile_id)
         except UserProfile.DoesNotExist:
             raise Http404("User with id=" + profile_id + " does not exist")
+        if user_profile.user_country != '':
+            user_profile.user_country = CountryList().get_county(user_profile.user_country)
         user_logos = PhotoLogo.objects.filter(owner__username=user_profile.username)
-        user_backgrounds = PhotoBackground.objects.filter(owner__username=user_profile.username)
         return render(request, "chat/user_profile.html", {
             'user_profile': user_profile,
-            'user_logos': user_logos,
-            'user_backgrounds': user_backgrounds
+            'user_logos': user_logos
         })
 
-    def post(self, request):
+    def post(self, request, profile_id):
         if not request.user.is_authenticated:
             return redirect('login')
-        user_profile = UserProfile.objects.get(username=request.user.username)
-        upload_time = str(datetime.now())[11:16] + "  |  " + str(datetime.now().strftime("%d %b %Y"))[:11]
-        if 'logo' in request.FILES:
-            request_logo = request.FILES['logo']
-            user_profile.user_logo = request_logo
-            PhotoLogo.objects.create(
-                owner=user_profile,
-                photo=request_logo,
-                upload_time=upload_time
-            )
-        if 'background' in request.FILES:
-            request_background = request.FILES['background']
-            user_profile.user_background_photo = request_background
-            PhotoBackground.objects.create(
-                owner=user_profile,
-                photo=request_background,
-                upload_time=upload_time
-            )
-        user_profile.save()
-        return redirect('/user/' + str(request.user.id))
-
+        if 'message' in request.POST:
+            author_id, friend_id = request.POST['data'].split()
+            msg = request.POST['message']
+            author = UserProfile.objects.get(id=author_id)
+            friend = UserProfile.objects.get(id=friend_id)
+            author_initials = author.first_name[0] + author.last_name[0]
+            msg_time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + datetime.now().strftime("%d %b %Y")[
+                                                                                  :11]
+            try:
+                author_chat_room = ChatRoom.objects.get(
+                    friend__id=friend_id,
+                    author__id=author_id
+                )
+            except ChatRoom.DoesNotExist:
+                author_chat_room = None
+            try:
+                friend_chat_room = ChatRoom.objects.get(
+                    friend__id=author_id,
+                    author__id=friend_id
+                )
+            except ChatRoom.DoesNotExist:
+                friend_chat_room = None
+            if not author_chat_room and not friend_chat_room:
+                if author == friend:
+                    chat_room = self.create_chat_room(author, author, author_id, author_id, author.user_logo)
+                    if msg != "":
+                        self.create_message(
+                            chat_room,
+                            msg, msg_time,
+                            author.username,
+                            author_initials,
+                            author.user_logo,
+                            author_id
+                        )
+                    return redirect('/user/' + str(request.user.id))
+                chat_room = self.create_chat_room(author, friend, author_id, friend_id, friend.user_logo)
+                if msg != "":
+                    self.create_message(
+                        chat_room,
+                        msg,
+                        msg_time,
+                        author.username,
+                        author_initials,
+                        author.user_logo,
+                        author_id
+                    )
+                chat_room = self.create_chat_room(friend, author, friend_id, author_id, author.user_logo)
+                if msg != "":
+                    self.create_message(
+                        chat_room,
+                        msg,
+                        msg_time,
+                        author.username,
+                        author_initials,
+                        author.user_logo,
+                        author_id
+                    )
+                    return redirect('/user/' + str(request.user.id))
+            if msg != "":
+                if author_chat_room:
+                    self.create_message(
+                        author_chat_room,
+                        msg,
+                        msg_time,
+                        author.username,
+                        author_initials,
+                        author.user_logo,
+                        author_id
+                    )
+                    if not friend_chat_room:
+                        chat_room = self.create_chat_room(friend, author, friend_id, author_id, author.user_logo)
+                        self.create_message(
+                            chat_room,
+                            msg,
+                            msg_time,
+                            author.username,
+                            author_initials,
+                            author.user_logo,
+                            author_id
+                        )
+                if friend_chat_room:
+                    if author_chat_room != friend_chat_room:
+                        self.create_message(
+                            friend_chat_room,
+                            msg,
+                            msg_time,
+                            author.username,
+                            author_initials,
+                            author.user_logo,
+                            author_id
+                        )
+                        if not author_chat_room:
+                            chat_room = self.create_chat_room(author, friend, author_id, friend_id, friend.user_logo)
+                            self.create_message(
+                                chat_room,
+                                msg,
+                                msg_time,
+                                author.username,
+                                author_initials,
+                                author.user_logo,
+                                author_id
+                            )
+                    return redirect('/user/' + str(request.user.id))
+                return redirect('/user/' + str(request.user.id))
+            return redirect('/user/' + str(request.user.id))
+        else:
+            user_profile = UserProfile.objects.get(username=request.user.username)
+            upload_time = str(datetime.now())[11:16] + "  |  " + str(datetime.now().strftime("%d %b %Y"))[:11]
+            if 'logo' in request.FILES:
+                request_logo = request.FILES['logo']
+                user_profile.user_logo = request_logo
+                PhotoLogo.objects.create(
+                    owner=user_profile,
+                    photo=request_logo,
+                    upload_time=upload_time
+                )
+            user_profile.save()
+            return redirect('/user/' + str(request.user.id))
 
 
 class SearchPeople(View):
@@ -109,23 +228,7 @@ class SearchPeople(View):
         return JsonResponse(serializer.data, safe=False)
 
 
-def user_profile_search_result(request, profile_id):
-    if not request.user.is_authenticated:
-        return redirect('login')
-    try:
-        user_profile = UserProfile.objects.get(pk=profile_id)
-    except UserProfile.DoesNotExist:
-        raise Http404("User with id=" + profile_id + " does not exist")
-    user_logos = PhotoLogo.objects.filter(owner__username=user_profile.username)
-    user_backgrounds = PhotoBackground.objects.filter(owner__username=user_profile.username)
-    return render(request, "chat/user_profile.html", {
-        'user_profile': user_profile,
-        'user_logos': user_logos,
-        'user_backgrounds': user_backgrounds
-    })
-
-
-class EditUserProfile(View):
+class EditUserProfile(APIView):
     COUNTRY_LIST = CountryList()
 
     def get(self, request):
@@ -176,7 +279,7 @@ class EditUserProfile(View):
         })
 
 
-class ChatManager(View):
+class ChatManager(APIView):
 
     def create_chat_room(self, author, friend, author_id, friend_id, logo):
         chat_room = ChatRoom.objects.create(
@@ -202,6 +305,7 @@ class ChatManager(View):
     def delete(self, request):
         if not request.user.is_authenticated:
             return redirect('login_user')
+        print(request.POST['delete_chat_room'])
         friend_id = request.POST['delete_chat_room']
         ChatRoom.objects.get(
             author__id=request.user.id,
@@ -269,113 +373,6 @@ class ChatManager(View):
                 )
             return HttpResponse('Sent', content_type='text/html')
         return HttpResponse(status=400)
-
-    def put(self, request):
-        if not request.user.is_authenticated:
-            return redirect('login')
-        author_id, friend_id = request.POST['create_chat_room'].split()
-        msg = request.POST['msg']
-        author = UserProfile.objects.get(id=author_id)
-        friend = UserProfile.objects.get(id=friend_id)
-        author_initials = author.first_name[0] + author.last_name[0]
-        msg_time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + datetime.now().strftime("%d %b %Y")[:11]
-        try:
-            author_chat_room = ChatRoom.objects.get(
-                friend__id=friend_id,
-                author__id=author_id
-            )
-        except ChatRoom.DoesNotExist:
-            author_chat_room = None
-        try:
-            friend_chat_room = ChatRoom.objects.get(
-                friend__id=author_id,
-                author__id=friend_id
-            )
-        except ChatRoom.DoesNotExist:
-            friend_chat_room = None
-        if not author_chat_room and not friend_chat_room:
-            if author == friend:
-                chat_room = self.create_chat_room(author, author, author_id, author_id, author.user_logo)
-                if msg != "":
-                    self.create_message(
-                        chat_room,
-                        msg, msg_time,
-                        author.username,
-                        author_initials,
-                        author.user_logo,
-                        author_id
-                    )
-                return redirect('chat')
-            chat_room = self.create_chat_room(author, friend, author_id, friend_id, friend.user_logo)
-            if msg != "":
-                self.create_message(
-                    chat_room,
-                    msg,
-                    msg_time,
-                    author.username,
-                    author_initials,
-                    author.user_logo,
-                    author_id
-                )
-            chat_room = self.create_chat_room(friend, author, friend_id, author_id, author.user_logo)
-            if msg != "":
-                self.create_message(
-                    chat_room,
-                    msg,
-                    msg_time,
-                    author.username,
-                    author_initials,
-                    author.user_logo,
-                    author_id
-                )
-                return redirect('chat')
-        if msg != "":
-            if author_chat_room:
-                self.create_message(
-                    author_chat_room,
-                    msg,
-                    msg_time,
-                    author.username,
-                    author_initials,
-                    author.user_logo,
-                    author_id
-                )
-                if not friend_chat_room:
-                    chat_room = self.create_chat_room(friend, author, friend_id, author_id, author.user_logo)
-                    self.create_message(
-                        chat_room,
-                        msg,
-                        msg_time,
-                        author.username,
-                        author_initials,
-                        author.user_logo,
-                        author_id
-                    )
-            if friend_chat_room:
-                if author_chat_room != friend_chat_room:
-                    self.create_message(
-                        friend_chat_room,
-                        msg,
-                        msg_time,
-                        author.username,
-                        author_initials,
-                        author.user_logo,
-                        author_id
-                    )
-                    if not author_chat_room:
-                        chat_room = self.create_chat_room(author, friend, author_id, friend_id, friend.user_logo)
-                        self.create_message(
-                            chat_room,
-                            msg,
-                            msg_time,
-                            author.username,
-                            author_initials,
-                            author.user_logo,
-                            author_id
-                        )
-                return redirect('chat')
-            return redirect('chat')
-        return redirect('chat')
 
 
 def logout_user(request):
