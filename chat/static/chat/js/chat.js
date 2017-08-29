@@ -13,7 +13,6 @@ $(document).ready(function () {
         $('#delete-dialog').click( function () {
             get_csrf_token();
             console.log(chat_room_data);
-            clearInterval(ajax_request_interval);
             $.ajax({
                 method: 'delete',
                 url: '/chat_manager/',
@@ -131,8 +130,8 @@ $(document).ready(function () {
                     'friend_id': chat_room_data
                 },
                 cache: false,
-                success: function () {
-                    console.log("Message has been sent.");
+                success: function (response) {
+                    console.log(response.status_message);
                 },
                 error: function () {
                     console.log("Error occurred while sending message.");

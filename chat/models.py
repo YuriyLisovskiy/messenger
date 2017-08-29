@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 
 class UserProfile(User):
     user_logo = models.ImageField(default='logo_none.png')
-    user_background_photo = models.ImageField(default='background_none.png')
     user_gender = models.CharField(default="", max_length=6)
     user_birthday_day = models.CharField(default="", max_length=2)
     user_birthday_month = models.CharField(default="", max_length=2)
@@ -15,12 +14,14 @@ class UserProfile(User):
     user_about_me = models.CharField(default="", max_length=999999)
     user_education = models.CharField(default="", max_length=100)
 
+
 class ChatRoom(models.Model):
     user_author_id = models.CharField(default="", max_length=100)
     user_friend_id = models.CharField(default="", max_length=100)
     author = models.ForeignKey(UserProfile, null=True, related_name='author')
     friend = models.ForeignKey(UserProfile, null=True, related_name='friend')
     logo = models.ImageField(default=1)
+
 
 class Message(models.Model):
     chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, default=1)
@@ -31,12 +32,8 @@ class Message(models.Model):
     author_logo = models.FileField(default=1)
     author_id = models.CharField(default="", max_length=100)
 
-class PhotoLogo(models.Model):
-    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, default=1)
-    photo = models.ImageField()
-    upload_time = models.CharField(default="", max_length=100)
 
-class PhotoBackground(models.Model):
+class PhotoLogo(models.Model):
     owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, default=1)
     photo = models.ImageField()
     upload_time = models.CharField(default="", max_length=100)

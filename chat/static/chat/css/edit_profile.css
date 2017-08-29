@@ -33,6 +33,7 @@
 .edit-profile textarea {
     background: #e6e6e6;
     width: 100%;
+    height: 100px;
     resize: none;
     color: #484848;
     border-radius: 2px;

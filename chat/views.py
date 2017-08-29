@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 from .forms import UserForm, UserProfile
 from django.http import HttpResponse, JsonResponse, Http404
-from .models import Message, PhotoLogo, PhotoBackground, ChatRoom
+from .models import Message, PhotoLogo, ChatRoom
 from .serializers import MessageSerializer, UserSerializer
 from datetime import datetime
 from . import functions
@@ -65,7 +65,7 @@ class Profile(View):
         user_logos = PhotoLogo.objects.filter(owner__username=user_profile.username)
         return render(request, "chat/user_profile.html", {
             'user_profile': user_profile,
-            'user_logos': user_logos
+            'user_logos': user_logos,
         })
 
     def post(self, request, profile_id):
@@ -371,8 +371,8 @@ class ChatManager(APIView):
                     author.user_logo,
                     author.id
                 )
-            return HttpResponse('Sent', content_type='text/html')
-        return HttpResponse(status=400)
+            return JsonResponse({'status_message': 'Message has been sent!'})
+        return JsonResponse({'status_message': 'Message is empty!'})
 
 
 def logout_user(request):
