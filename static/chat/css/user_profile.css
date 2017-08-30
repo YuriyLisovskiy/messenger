@@ -79,6 +79,15 @@
     border: none;
     padding: 5px;
     font-weight: normal;
+    resize: none;
+    outline: none;
+}
+.send-message textarea::-webkit-scrollbar {
+    width: 10px;
+}
+.send-message textarea::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background: rgba(0,0,0,0.1);
 }
 .content .right-part {
     float: left;
