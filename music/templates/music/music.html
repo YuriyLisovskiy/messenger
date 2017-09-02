@@ -9,7 +9,48 @@
 </head>
 <body>
     {% block body %}
-        <h1>Music Page!</h1>
+        <link rel="stylesheet" type="text/css" href="{% static 'music/css/music.css' %}">
+        <div class="content">
+            <div class="left"></div>
+            <div class="wrapper" id="wrapper">
+                {% if songs %}
+                    <audio class="track" id="track">
+                        <source id="source" src="{{ songs.0.source.url }}" type="audio/mp3">
+                    </audio>
+                    <h5 id="song-title">{{ songs.0.artist }} - {{ songs.0.title }}</h5>
+                    <nav class="nav-wrapper">
+                        <div class="default-bar" id="default-bar">
+                            <div class="progress-bar" id="progress-bar"></div>
+                        </div>
+                        <div class="buttons" id="buttons">
+                            <button type="button" class="play-button" id="play-button" title="Play">
+                                <span id="play-span" class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="mute-button" id="mute-button" title="Mute">
+                                <span id="mute-span" class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>
+                            </button>
+                            <span class="current-time" id="current-time">0:00</span>/<span class="full-duration" id="full-duration">0:00</span>
+                        </div>
+                    </nav>
+                    <div class="playlist">
+                        {% for song in songs %}
+                            <ul id="playlist">
+                                <li id="song">
+                                    <button type="button" class="play-button" id="play-button" title="Play" disabled>
+                                        <span id="play-span" class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                                    </button>
+                                    <a name="song" href="{{ song.source.url }}" data-song-name="{{ song.artist }} - {{ song.title }}">{{ song.artist }} - {{ song.title }}</a>
+                                </li>
+                            </ul>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <h4>Your playlist is empty</h4>
+                {% endif %}
+            </div>
+            <div class="right"></div>
+        </div>
+        <script type="text/javascript" src="{% static 'music/js/audio_player.js' %}"></script>
     {% endblock %}
 </body>
 </html>
