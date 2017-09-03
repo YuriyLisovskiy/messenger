@@ -1,6 +1,6 @@
 .content {
     background: white;
-    height: 530px;
+    height: 550px;
     width: 90%;
     margin: auto;
     border-radius: 5px;
@@ -8,17 +8,103 @@
 }
 .content .left {
     float: left;
-    height: 530px;
+    height: 550px;
     border-right: 1px solid #A9A9A9;
-    width: 23%;
+    width: 27%;
     margin-right: 10px;
 }
 .content .right {
     float: left;
-    height: 530px;
+    height: 550px;
     border-left: 1px solid #A9A9A9;
-    width: 23%;
+    width: 27%;
     margin-left: 10px;
+}
+.right .find-album {
+    width: 100%;
+    margin: 15px;
+}
+.find-album input {
+    width: 80%;
+    height: 40px;
+    border: 1px solid #A9A9A9;
+    outline: none;
+    border-radius: 5px;
+    padding-left: 10px;
+    font-size: 16px;
+}
+.find-album button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #A9A9A9;
+    outline: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.find-album button:hover {
+    background: #A9A9A9;
+    -webkit-transition: background .2s ease;
+    -moz-transition: background .2s ease;
+    -o-transition: background .2s ease;
+}
+.right .album-list {
+    height: 350px;
+    overflow-y: scroll;
+    margin: auto;
+}
+.right .album-list ul {
+    list-style-type: none;
+}
+.album-list li a {
+    cursor: pointer;
+    color: #666666;
+    text-decoration: none;
+}
+.album-list .album-details {
+    display: none;
+}
+.album-details .album-logo {
+    width: 80%;
+    height: auto;
+}
+.add-album {
+    width: 92%;
+    margin: 15px 15px 0 15px;
+}
+.add-album input,
+.add-album textarea {
+    width: 100%;
+    height: 40px;
+    font-size: 16px;
+    padding-left: 10px;
+    border: 1px solid #A9A9A9;
+    outline: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.all-form {
+    display: none;
+}
+.add-album textarea {
+    height: 70px;
+}
+.add-album input[type=submit] {
+    width: 100%;
+    text-align: center;
+    height: 40px;
+    border: 1px solid #A9A9A9;
+    outline: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+.add-album input[type=submit]:hover:enabled {
+    background: #A9A9A9;
+    -webkit-transition: background .2s ease;
+    -moz-transition: background .2s ease;
+    -o-transition: background .2s ease;
+}
+.add-album input[type=submit]:disabled {
+    opacity: 0.5;
 }
 .content .wrapper {
     width: 600px;
@@ -30,7 +116,8 @@
     text-align: center;
     padding-bottom: 10px;
 }
-.wrapper h4 {
+.wrapper h4,
+.right h4 {
     width: 80%;
     margin: auto;
     text-align: center;

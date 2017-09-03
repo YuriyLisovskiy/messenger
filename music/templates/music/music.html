@@ -32,25 +32,66 @@
                             <span class="current-time" id="current-time">0:00</span>/<span class="full-duration" id="full-duration">0:00</span>
                         </div>
                     </nav>
-                    <div class="playlist">
+                {% else %}
+                    <h4>Your playlist is empty</h4>
+                {% endif %}
+                <div class="playlist" id="playlist-area">
+                    {% if songs %}
                         {% for song in songs %}
                             <ul id="playlist">
                                 <li id="song">
                                     <button type="button" class="play-button" id="play-button" title="Play" disabled>
                                         <span id="play-span" class="glyphicon glyphicon-play" aria-hidden="true"></span>
                                     </button>
-                                    <a name="song" href="{{ song.source.url }}" data-song-name="{{ song.artist }} - {{ song.title }}">{{ song.artist }} - {{ song.title }}</a>
+                                    <a name="song" id="song-href" href="{{ song.source.url }}" data-song-name="{{ song.artist }} - {{ song.title }}">{{ song.artist }} - {{ song.title }}</a>
                                 </li>
                             </ul>
                         {% endfor %}
-                    </div>
-                {% else %}
-                    <h4>Your playlist is empty</h4>
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
-            <div class="right"></div>
+            <div class="right">
+                <div class="add-album" id="add-album">
+                    <form method="post" enctype="multipart/form-data" autocomplete="off">
+                        {% csrf_token %}
+                        <input name="title" id="title" placeholder="Album title..." required>
+                        <div id="all-form" class="all-form">
+                            <input name="artist" placeholder="Album artist..." required>
+                            <input name="logo" type="file" placeholder="Album logo..." required>
+                            <textarea name="description" placeholder="Album description..."></textarea>
+                        </div>
+                        <input id="submit" type="submit" value="Add album" disabled>
+                    </form>
+                </div>
+                <div class="find-album">
+                    <input id="find-album-textarea" placeholder="Find album...">
+                    <button id="find-album-search-btn"><span class="glyphicon glyphicon-search"></span></button>
+                </div>
+                <div class="album-list">
+                    {% if albums %}
+                        <ul>
+                            {% for album in albums %}
+                                <li>
+                                    <a name="album" id="{{ album.id }}">{{ album.artist }} - {{ album.title }}</a>
+                                    <div data-target="{{ album.id }}" id="album-details" class="album-details">
+                                        <img class="album-logo" src="{{ album.logo.url }}">
+                                        {% if album.description %}
+                                            <div class="album-description">{{ album.description }}</div>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <H4>You have no albums</H4>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        <script type="text/javascript" src="{% static 'music/js/audio_player.js' %}"></script>
+        {% if songs %}
+            <script type="text/javascript" src="{% static 'music/js/audio_player.js' %}"></script>
+        {% endif %}
+        <script type="text/javascript" src="{% static 'music/js/music.js' %}"></script>
     {% endblock %}
 </body>
 </html>

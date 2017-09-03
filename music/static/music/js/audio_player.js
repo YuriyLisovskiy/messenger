@@ -77,7 +77,7 @@ $(document).ready(function () {
             progress_bar.style.width = mouse_x + "px";
         }
     }
-    $('a[name="song"]').click(function (event) {
+    $(document).on('click', "#song-href", function (event) {
         event.preventDefault();
         source.src = this;
         song_title.html($(this).attr('data-song-name'));

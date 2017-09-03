@@ -8,11 +8,13 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         fields = '__all__'
 
+
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
         fields = ('user_logo', 'first_name', 'last_name', 'id')
+
 
 class ChatRoomSerializer(serializers.ModelSerializer):
 
