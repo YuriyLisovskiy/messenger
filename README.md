@@ -71,9 +71,9 @@ Open in browser `https://127.0.0.1:8000` if you run the server with default para
 
 ## Authors
 
-**Yuriy Lisovskiy** - *Initial work* - [YuriyLisovskiy](https://github.com/YuriyLisovskiy)
+**[Yuriy Lisovskiy](https://github.com/YuriyLisovskiy)** - *All work*
 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
