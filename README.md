@@ -71,7 +71,7 @@ Open in browser `https://127.0.0.1:8000` if you run the server with default para
 
 ## Authors
 
-**Yuriy Lisovskiy** - *Initial work* - [YuriyLisovskiy](https://github.com/PurpleBooth)
+**Yuriy Lisovskiy** - *Initial work* - [YuriyLisovskiy](https://github.com/YuriyLisovskiy)
 
 
 ## License
