@@ -1,6 +1,6 @@
 # Messenger
 
-This is a simple messenger. Currently it support creating user profile, editing it and massaging. Also there are music music app. But it is not tested, so there can be some bugs.
+This is a simple messenger. Currently it supports creating user profile, editing it and massaging. Also there are music app. But it is not tested, so there can be some bugs.
 Also administrator account is not available now. 
 
 ## Getting Started
