@@ -48,7 +48,7 @@ Or you can install all requirement modules from `requirements.txt` file:
 pip install -r requirements.txt
 ```
 
-### Installing
+### Installing and Running
 
 A step by step series of examples that tell you have to get a development env running.
 
@@ -56,12 +56,22 @@ Clone the repository:
 ```
 git clone https://github.com/YuriyLisovskiy/messenger.git
 ```
-Run the server: 
+
+Go to messenger folder:
 ```
 cd messenger
+```
+
+Migrate database:
+```
+python manage.py migrate
+```
+
+Run the server: 
+```
 python manage.py runserver
 ```
-Or you can start the server with you own ip and port.
+Or you can start the server with you own ip address and port.
 
 For example: 
 ```
