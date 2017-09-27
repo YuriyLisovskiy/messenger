@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 from .forms import UserForm, UserProfile
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import HttpResponseForbidden, JsonResponse, Http404
 from .models import Message, PhotoLogo, ChatRoom
 from .serializers import MessageSerializer, UserSerializer
 from datetime import datetime
@@ -18,16 +18,16 @@ def index(request):
 
 
 def chat(request):
-    if request.user.is_authenticated:
-        user = request.user
-        all_users = UserProfile.objects.all()
-        all_chat_rooms = ChatRoom.objects.all()
-        return render(request, "chat/chat.html", {
-            'user': user,
-            'all_users': all_users,
-            'all_chat_rooms': all_chat_rooms
-        })
-    return redirect('login')
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden()
+    user = request.user
+    all_users = UserProfile.objects.all()
+    all_chat_rooms = ChatRoom.objects.all()
+    return render(request, "chat/chat.html", {
+        'user': user,
+	    'all_users': all_users,
+        'all_chat_rooms': all_chat_rooms
+    })
 
 
 class Profile(View):
@@ -55,7 +55,7 @@ class Profile(View):
 
     def get(self, request, profile_id):
         if not request.user.is_authenticated:
-            return redirect('login')
+            return HttpResponseForbidden()
         try:
             user_profile = UserProfile.objects.get(pk=profile_id)
         except UserProfile.DoesNotExist:
@@ -70,7 +70,7 @@ class Profile(View):
 
     def post(self, request, profile_id):
         if not request.user.is_authenticated:
-            return redirect('login')
+            return HttpResponseForbidden()
         if 'message' in request.POST:
             author_id, friend_id = request.POST['data'].split()
             msg = request.POST['message']
@@ -195,13 +195,13 @@ class SearchPeople(View):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return redirect('login')
+            return HttpResponseForbidden()
         data = UserProfile.objects.all()
         return render(request, "chat/search.html", {'all_users': data})
 
     def post(self, request):
         if not request.user.is_authenticated:
-            return redirect('login')
+            return HttpResponseForbidden()
         keyword = request.POST['search']
         if 'city' in request.POST:
             f_n, l_n = keyword.split()
@@ -233,7 +233,7 @@ class EditUserProfile(APIView):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return redirect('login')
+            return HttpResponseForbidden()
         user = UserProfile.objects.get(username=request.user.username)
         if user.user_country != '':
             user.user_country = self.COUNTRY_LIST.get_county(user.user_country)
@@ -244,7 +244,7 @@ class EditUserProfile(APIView):
 
     def post(self, request):
         if not request.user.is_authenticated:
-            return redirect('login')
+            return HttpResponseForbidden()
         user = UserProfile.objects.get(username=request.user.username)
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
@@ -304,7 +304,7 @@ class ChatManager(APIView):
 
     def delete(self, request):
         if not request.user.is_authenticated:
-            return redirect('login_user')
+            return HttpResponseForbidden()
         print(request.POST['delete_chat_room'])
         friend_id = request.POST['delete_chat_room']
         ChatRoom.objects.get(
@@ -315,7 +315,7 @@ class ChatManager(APIView):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return redirect('login')
+            return HttpResponseForbidden()
         if 'msgs_amount' in request.GET and 'chat_room_data' in request.GET:
             msgs_am = len(Message.objects.filter(
                 chat_room=ChatRoom.objects.get(
@@ -337,7 +337,7 @@ class ChatManager(APIView):
 
     def post(self, request):
         if not request.user.is_authenticated:
-            return redirect('login')
+            return HttpResponseForbidden()
         msg = request.POST['msg']
         if msg != '':
             msg_time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + str(datetime.now().strftime("%d %b %Y"))[:11]
@@ -436,6 +436,8 @@ class UserFormView(View):
 
 
 def send_email(request):
+    if request.user.is_authenticated:
+        return redirect('index')
     if 'generated_code' in request.GET and 'user_email' in request.GET:
         usr_email = request.GET['user_email']
         if not functions.checkEmail(usr_email, UserProfile.objects.all()):
