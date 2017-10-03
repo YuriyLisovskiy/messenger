@@ -1,97 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% extends 'chat/base.html' %}
-    {% load static %}
-    {% block title %}Music{% endblock %}
-    {% block music_active %}active{% endblock %}
-</head>
-<body>
-    {% block body %}
-        <link rel="stylesheet" type="text/css" href="{% static 'music/css/music.css' %}">
-        <div class="content">
-            <div class="left"></div>
-            <div class="wrapper" id="wrapper">
-                {% if songs %}
-                    <audio class="track" id="track">
-                        <source id="source" src="{{ songs.0.source.url }}" type="audio/mp3">
-                    </audio>
-                    <h5 id="song-title">{{ songs.0.artist }} - {{ songs.0.title }}</h5>
-                    <nav class="nav-wrapper">
-                        <div class="default-bar" id="default-bar">
-                            <div class="progress-bar" id="progress-bar"></div>
-                        </div>
-                        <div class="buttons" id="buttons">
-                            <button type="button" class="play-button" id="play-button" title="Play">
-                                <span id="play-span" class="glyphicon glyphicon-play" aria-hidden="true"></span>
-                            </button>
-                            <button type="button" class="mute-button" id="mute-button" title="Mute">
-                                <span id="mute-span" class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>
-                            </button>
-                            <span class="current-time" id="current-time">0:00</span>/<span class="full-duration" id="full-duration">0:00</span>
-                        </div>
-                    </nav>
-                {% else %}
-                    <h4>Your playlist is empty</h4>
-                {% endif %}
-                <div class="playlist" id="playlist-area">
-                    {% if songs %}
-                        {% for song in songs %}
-                            <ul id="playlist">
-                                <li id="song">
-                                    <button type="button" class="play-button" id="play-button" title="Play" disabled>
-                                        <span id="play-span" class="glyphicon glyphicon-play" aria-hidden="true"></span>
-                                    </button>
-                                    <a name="song" id="song-href" href="{{ song.source.url }}" data-song-name="{{ song.artist }} - {{ song.title }}">{{ song.artist }} - {{ song.title }}</a>
-                                </li>
-                            </ul>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            </div>
-            <div class="right">
-                <div class="add-album" id="add-album">
-                    <form method="post" enctype="multipart/form-data" autocomplete="off">
-                        {% csrf_token %}
-                        <input name="title" id="title" placeholder="Album title..." required>
-                        <div id="all-form" class="all-form">
-                            <input name="artist" placeholder="Album artist..." required>
-                            <input name="logo" type="file" placeholder="Album logo..." required>
-                            <textarea name="description" placeholder="Album description..."></textarea>
-                        </div>
-                        <input id="submit" type="submit" value="Add album" disabled>
-                    </form>
-                </div>
-                <div class="find-album">
-                    <input id="find-album-textarea" placeholder="Find album...">
-                    <button id="find-album-search-btn"><span class="glyphicon glyphicon-search"></span></button>
-                </div>
-                <div class="album-list">
-                    {% if albums %}
-                        <ul>
-                            {% for album in albums %}
-                                <li>
-                                    <a name="album" id="{{ album.id }}">{{ album.artist }} - {{ album.title }}</a>
-                                    <div data-target="{{ album.id }}" id="album-details" class="album-details">
-                                        <img class="album-logo" src="{{ album.logo.url }}">
-                                        {% if album.description %}
-                                            <div class="album-description">{{ album.description }}</div>
-                                        {% endif %}
-                                    </div>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <H4>You have no albums</H4>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        {% if songs %}
-            <script type="text/javascript" src="{% static 'music/js/audio_player.js' %}"></script>
-        {% endif %}
-        <script type="text/javascript" src="{% static 'music/js/music.js' %}"></script>
-    {% endblock %}
-</body>
-</html>
+{% extends 'chat/base.html' %}
+{% load static %}
+{% block title %}Music{% endblock %}
+{% block head %}
+	{{ block.super }}
+	<link rel="stylesheet" type="text/css" href="{% static 'music/css/music.css' %}">
+{% endblock %}
+{% block music_active %}active{% endblock %}
+{% block body %}
+	<div class="content">
+		<div class="left"></div>
+		<div class="wrapper" id="wrapper">
+			{% if songs %}
+				<audio class="track" id="track">
+					<source id="source" src="{{ songs.0.source.url }}" type="audio/mp3">
+				</audio>
+				<h5 id="song-title">{{ songs.0.artist }} - {{ songs.0.title }}</h5>
+				<nav class="nav-wrapper">
+					<div class="default-bar" id="default-bar">
+						<div class="progress-bar" id="progress-bar"></div>
+					</div>
+					<div class="buttons" id="buttons">
+						<button type="button" class="play-button" id="play-button" title="Play">
+							<span id="play-span" class="glyphicon glyphicon-play" aria-hidden="true"></span>
+						</button>
+						<button type="button" class="mute-button" id="mute-button" title="Mute">
+							<span id="mute-span" class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>
+						</button>
+						<span class="current-time" id="current-time">0:00</span>/<span class="full-duration" id="full-duration">0:00</span>
+					</div>
+				</nav>
+			{% else %}
+				<h4>Your playlist is empty</h4>
+			{% endif %}
+			<div class="playlist" id="playlist-area">
+				{% if songs %}
+					{% for song in songs %}
+						<ul id="playlist">
+							<li id="song">
+								<button type="button" class="play-button" id="play-button" title="Play" disabled>
+									<span id="play-span" class="glyphicon glyphicon-play" aria-hidden="true"></span>
+								</button>
+								<a name="song" id="song-href" href="{{ song.source.url }}" data-song-name="{{ song.artist }} - {{ song.title }}">{{ song.artist }} - {{ song.title }}</a>
+							</li>
+						</ul>
+					{% endfor %}
+				{% endif %}
+			</div>
+		</div>
+		<div class="right">
+			<div class="add-album" id="add-album">
+				<form method="post" enctype="multipart/form-data" autocomplete="off">
+					{% csrf_token %}
+					<input name="title" id="title" placeholder="Album title..." required>
+					<div id="all-form" class="all-form">
+						<input name="artist" placeholder="Album artist..." required>
+						<input name="logo" type="file" placeholder="Album logo..." required>
+						<textarea name="description" placeholder="Album description..."></textarea>
+					</div>
+					<input id="submit" type="submit" value="Add album" disabled>
+				</form>
+			</div>
+			<div class="find-album">
+				<input id="find-album-textarea" placeholder="Find album...">
+				<button id="find-album-search-btn"><span class="glyphicon glyphicon-search"></span></button>
+			</div>
+			<div class="album-list">
+				{% if albums %}
+					<ul>
+						{% for album in albums %}
+							<li>
+								<a name="album" id="{{ album.id }}">{{ album.artist }} - {{ album.title }}</a>
+								<div data-target="{{ album.id }}" id="album-details" class="album-details">
+									<img class="album-logo" src="{{ album.logo.url }}">
+									{% if album.description %}
+										<div class="album-description">{{ album.description }}</div>
+									{% endif %}
+								</div>
+							</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					<H4>You have no albums</H4>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block footer %}
+	{% if songs %}
+		<script type="text/javascript" src="{% static 'music/js/audio_player.js' %}"></script>
+	{% endif %}
+	<script type="text/javascript" src="{% static 'music/js/music.js' %}"></script>
+{% endblock %}

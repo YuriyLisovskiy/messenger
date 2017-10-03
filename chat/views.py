@@ -1,13 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic import View
 from .forms import UserForm, UserProfile
-from django.http import HttpResponseForbidden, JsonResponse, Http404
+from django.http import JsonResponse
 from .models import Message, PhotoLogo, ChatRoom
 from .serializers import MessageSerializer, UserSerializer
 from datetime import datetime
-from . import functions
-from .lib import CountryList
+from utils import functions
+from utils.lib import CountryList, HttpForbidden, HttpNotFound
 import smtplib
 from email.mime.text import MIMEText
 from rest_framework.views import APIView
@@ -19,7 +19,7 @@ def index(request):
 
 def chat(request):
     if not request.user.is_authenticated:
-        return HttpResponseForbidden()
+        return HttpForbidden('You are not authenticated')
     user = request.user
     all_users = UserProfile.objects.all()
     all_chat_rooms = ChatRoom.objects.all()
@@ -55,11 +55,11 @@ class Profile(View):
 
     def get(self, request, profile_id):
         if not request.user.is_authenticated:
-            return HttpResponseForbidden()
+            return HttpForbidden('You are not authenticated')
         try:
             user_profile = UserProfile.objects.get(pk=profile_id)
         except UserProfile.DoesNotExist:
-            raise Http404("User with id=" + profile_id + " does not exist")
+            return HttpNotFound('User')
         if user_profile.user_country != '':
             user_profile.user_country = CountryList().get_county(user_profile.user_country)
         user_logos = PhotoLogo.objects.filter(owner__username=user_profile.username)
@@ -70,15 +70,17 @@ class Profile(View):
 
     def post(self, request, profile_id):
         if not request.user.is_authenticated:
-            return HttpResponseForbidden()
+            return HttpForbidden('You are not authenticated')
         if 'message' in request.POST:
             author_id, friend_id = request.POST['data'].split()
             msg = request.POST['message']
-            author = UserProfile.objects.get(id=author_id)
-            friend = UserProfile.objects.get(id=friend_id)
+            try:
+                author = UserProfile.objects.get(id=author_id)
+                friend = UserProfile.objects.get(id=friend_id)
+            except UserProfile.DoesNotExist:
+                return HttpNotFound('User')
             author_initials = author.first_name[0] + author.last_name[0]
-            msg_time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + datetime.now().strftime("%d %b %Y")[
-                                                                                  :11]
+            msg_time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + datetime.now().strftime("%d %b %Y")[:11]
             try:
                 author_chat_room = ChatRoom.objects.get(
                     friend__id=friend_id,
@@ -177,7 +179,7 @@ class Profile(View):
                 return redirect('/user/' + str(request.user.id))
             return redirect('/user/' + str(request.user.id))
         else:
-            user_profile = UserProfile.objects.get(username=request.user.username)
+            user_profile = get_object_or_404(UserProfile, id=request.user.id)
             upload_time = str(datetime.now())[11:16] + "  |  " + str(datetime.now().strftime("%d %b %Y"))[:11]
             if 'logo' in request.FILES:
                 request_logo = request.FILES['logo']
@@ -195,13 +197,13 @@ class SearchPeople(View):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return HttpResponseForbidden()
+            return HttpForbidden('You are not authenticated')
         data = UserProfile.objects.all()
         return render(request, "chat/search.html", {'all_users': data})
 
     def post(self, request):
         if not request.user.is_authenticated:
-            return HttpResponseForbidden()
+            return HttpForbidden('You are not authenticated')
         keyword = request.POST['search']
         if 'city' in request.POST:
             f_n, l_n = keyword.split()
@@ -233,8 +235,11 @@ class EditUserProfile(APIView):
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return HttpResponseForbidden()
-        user = UserProfile.objects.get(username=request.user.username)
+            return HttpForbidden('You are not authenticated')
+        try:
+            user = UserProfile.objects.get(id=request.user.id)
+        except UserProfile.DoesNotExist:
+            return HttpNotFound('User')
         if user.user_country != '':
             user.user_country = self.COUNTRY_LIST.get_county(user.user_country)
         return render(request, "chat/edit_profile.html", {
@@ -244,8 +249,11 @@ class EditUserProfile(APIView):
 
     def post(self, request):
         if not request.user.is_authenticated:
-            return HttpResponseForbidden()
-        user = UserProfile.objects.get(username=request.user.username)
+            return HttpForbidden('You are not authenticated')
+        try:
+            user = UserProfile.objects.get(id=request.user.id)
+        except UserProfile.DoesNotExist:
+            return HttpNotFound('User')
         first_name = request.POST['first_name']
         last_name = request.POST['last_name']
         city = request.POST['city']
@@ -304,18 +312,18 @@ class ChatManager(APIView):
 
     def delete(self, request):
         if not request.user.is_authenticated:
-            return HttpResponseForbidden()
+            return HttpForbidden('You are not authenticated')
         print(request.POST['delete_chat_room'])
         friend_id = request.POST['delete_chat_room']
-        ChatRoom.objects.get(
-            author__id=request.user.id,
-            friend__id=friend_id
-        ).delete()
+        try:
+            ChatRoom.objects.get(author__id=request.user.id, friend__id=friend_id).delete()
+        except ChatRoom.DoesNotExist:
+            return HttpNotFound('Chat room')
         return JsonResponse({'success': 'Chat room has been deleted.'})
 
     def get(self, request):
         if not request.user.is_authenticated:
-            return HttpResponseForbidden()
+            return HttpForbidden('You are not authenticated')
         if 'msgs_amount' in request.GET and 'chat_room_data' in request.GET:
             msgs_am = len(Message.objects.filter(
                 chat_room=ChatRoom.objects.get(
@@ -337,12 +345,12 @@ class ChatManager(APIView):
 
     def post(self, request):
         if not request.user.is_authenticated:
-            return HttpResponseForbidden()
+            return HttpForbidden('You are not authenticated')
         msg = request.POST['msg']
         if msg != '':
             msg_time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + str(datetime.now().strftime("%d %b %Y"))[:11]
-            author = UserProfile.objects.get(id=request.user.id)
-            friend = UserProfile.objects.get(id=request.POST['friend_id'])
+            author = get_object_or_404(UserProfile, id=request.user.id)
+            friend = get_object_or_404(UserProfile, id=request.POST['friend_id'])
             author_fname_lname = author.first_name[0] + author.last_name[0]
             try:
                 chat_room = ChatRoom.objects.get(author__id=author.id, friend__id=friend.id)

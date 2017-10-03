@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/commons/5/5c/Telegram_Messenger.png" type="image/png">
-    <title>{% block title %}Main{% endblock %}</title>
+    <title>{% block title %}Base{% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/base.css' %}" />
@@ -55,7 +55,7 @@
                         {% if request.user.is_superuser %}
                             <ul class="nav navbar-nav">
                                 <li>
-                                    <a target="_blank" href="/admin/">
+                                    <a href="/admin/">
                                         <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;
                                     Admin Panel
                                     </a>
@@ -83,7 +83,7 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li class="{% block user_profile %}{% endblock %}">
-                                <a href="/user/{{ user.id }}">
+                                <a href="{% url 'profile' user.id %}">
                                     <span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;
                                     {{ user.username }}
                                 </a>
@@ -130,5 +130,6 @@
     <script type="text/javascript" src="{% static 'chat/js/particles.js' %}"></script>
     <script type="text/javascript" src="{% static 'chat/js/particles_config.js' %}"></script>
     <script type="text/javascript" src="{% static 'chat/js/base.js' %}"></script>
+	{% block footer %}{% endblock %}
 </body>
 </html>

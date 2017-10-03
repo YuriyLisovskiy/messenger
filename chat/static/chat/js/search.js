@@ -80,7 +80,7 @@ $(document).ready(function () {
             return "";
         }
         var html = '<div class="user-found">';
-        html += '<a href="/user/' + response[key].id + '">';
+        html += "<a href={% url 'profile' " + response[key].id + "'>";
         if (response[key].user_logo) {
             html += '<div class="user-img" style="background-image: url(' + response[key].user_logo + ')"></div>';
         }

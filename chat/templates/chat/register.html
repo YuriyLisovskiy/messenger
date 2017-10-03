@@ -1,68 +1,64 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% extends 'chat/base.html' %}
-    {% load static %}
-    {% block title %}Register{% endblock %}
-    {% block register_active %}active{% endblock %}
-</head>
-<body>
-    {% block body %}
-        <link rel="stylesheet" href="{% static 'chat/css/login_register_style.css' %}">
-        {% if form.errors %}
-            <div class="alert alert-danger alert-dismissable">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">
-                    <span class="glyphicon glyphicon-remove"></span>
-                </a>
-                <strong>Error(s): </strong>{{ form.errors }}
-            </div>
-        {% endif %}
-        <div class="title"><h1>Register</h1></div>
-        <div id="content-register" class="content-register">
-            <div class="container">
-                <div class="form-box">
-                    <form action="" method="post">
-                        {% csrf_token %}
-                        <p>First name:</p>
-                        <div class="inner-addon left-addon">
-                            <i class="glyphicon glyphicon-pencil"></i>
-                            <div>{{ form.first_name }}</div>
-                        </div>
-                        <p>Last name:</p>
-                        <div class="inner-addon left-addon">
-                            <i class="glyphicon glyphicon-pencil"></i>
-                            <div>{{ form.last_name }}</div>
-                        </div>
-                        <p>Username:</p>
-                        <div class="inner-addon left-addon">
-                            <i class="glyphicon glyphicon-user"></i>
-                            <div>{{ form.username }}</div>
-                        </div>
-                        <p>Email:</p>
-                        <div class="inner-addon left-addon">
-                            <i class="glyphicon glyphicon-envelope"></i>
-                            <div>{{ form.email }}</div>
-                        </div>
-                        <p>Password:</p>
-                        <div class="inner-addon left-addon">
-                            <i class="glyphicon glyphicon-lock"></i>
-                            <div>{{ form.password }}</div>
-                        </div>
-                        <div id="received-code-content">
-                            <p>Received code:</p>
-                            <div class="inner-addon left-addon">
-                                <i class="glyphicon glyphicon-lock"></i>
-                                <input id="received-code" name="code" type="text" placeholder="Received code" required>
-                            </div>
-                        </div>
-                        <button class="login-register-btn" id="register">Register</button>
-                    </form>
-                    <a href="{% url 'login' %}">Already have an account?</a>
-                </div>
-            </div>
-        </div>
-        <script type="text/javascript" src="{% static 'chat/js/register.js' %}"></script>
-    {% endblock %}
-</body>
-</html>
+{% extends 'chat/base.html' %}
+{% load static %}
+{% block title %}Register{% endblock %}
+{% block head %}
+	{{ block.super }}
+	<link rel="stylesheet" href="{% static 'chat/css/login_register_style.css' %}">
+{% endblock %}
+{% block register_active %}active{% endblock %}
+{% block body %}
+	{% if form.errors %}
+		<div class="alert alert-danger alert-dismissable">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">
+				<span class="glyphicon glyphicon-remove"></span>
+			</a>
+			<strong>Error(s): </strong>{{ form.errors }}
+		</div>
+	{% endif %}
+	<div class="title"><h1>Register</h1></div>
+	<div id="content-register" class="content-register">
+		<div class="container">
+			<div class="form-box">
+				<form action="" method="post">{% csrf_token %}
+					<p>First name:</p>
+					<div class="inner-addon left-addon">
+						<i class="glyphicon glyphicon-pencil"></i>
+						<div>{{ form.first_name }}</div>
+					</div>
+					<p>Last name:</p>
+					<div class="inner-addon left-addon">
+						<i class="glyphicon glyphicon-pencil"></i>
+						<div>{{ form.last_name }}</div>
+					</div>
+					<p>Username:</p>
+					<div class="inner-addon left-addon">
+						<i class="glyphicon glyphicon-user"></i>
+						<div>{{ form.username }}</div>
+					</div>
+					<p>Email:</p>
+					<div class="inner-addon left-addon">
+						<i class="glyphicon glyphicon-envelope"></i>
+						<div>{{ form.email }}</div>
+					</div>
+					<p>Password:</p>
+					<div class="inner-addon left-addon">
+						<i class="glyphicon glyphicon-lock"></i>
+						<div>{{ form.password }}</div>
+					</div>
+					<div id="received-code-content">
+						<p>Received code:</p>
+						<div class="inner-addon left-addon">
+							<i class="glyphicon glyphicon-lock"></i>
+							<input id="received-code" name="code" type="text" placeholder="Received code" required>
+						</div>
+					</div>
+					<button class="login-register-btn" id="register">Register</button>
+				</form>
+				<a href="{% url 'login' %}">Already have an account?</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block footer %}
+	<script type="text/javascript" src="{% static 'chat/js/register.js' %}"></script>
+{% endblock %}

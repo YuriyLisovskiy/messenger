@@ -1,49 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    {% extends 'chat/base.html' %}
-    {% load static %}
-    {% block title %}Login{% endblock %}
-    {% block login_active %}active{% endblock %}
-</head>
-<body>
-    {% block body %}
-        <link rel="stylesheet" type="text/css" href="{% static 'chat/css/login_register_style.css' %}">
-        <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css">
-        {% if error_message %}
-            <div class="alert alert-danger alert-dismissable">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">
-                    <span class="glyphicon glyphicon-remove"></span>
-                </a>
-                <strong>Error: </strong>{{ error_message }}
-            </div>
-        {% endif %}
-        <div class="title"><h1>Login</h1></div>
-        <div class="content-login">
-            <div class="container">
-                <div class="form-box">
-                    <form action="{% url 'login'%}" method="post">
-                        {% csrf_token %}
-                        <p>Username:</p>
-                        <div class="inner-addon left-addon">
-                            <i class="glyphicon glyphicon-user"></i>
-                            <input placeholder="Username" maxlength="42" name="username" type="text" required>
-                        </div>
-                        <div>
-                            <p>Password:</p>
-                            <div class="inner-addon left-addon">
-                                <i class="glyphicon glyphicon-lock"></i>
-                                <input placeholder="Password" maxlength="66" name="password" type="password" required>
-                            </div>
-                        </div>
-                        <button class="login-register-btn">Login</button>
-                    </form>
-                    <a href="{% url 'register' %}">Don't have an account?</a>
-                </div>
-            </div>
-        </div>
-        <script type="text/javascript" href="{% static 'chat/js/login.js' %}"></script>
-    {% endblock %}
-</body>
-</html>
+{% extends 'chat/base.html' %}
+{% load static %}
+{% block title %}Login{% endblock %}
+{% block head %}
+	{{ block.super }}
+	<link rel="stylesheet" type="text/css" href="{% static 'chat/css/login_register_style.css' %}">
+	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css">
+{% endblock %}
+{% block login_active %}active{% endblock %}
+{% block body %}
+	{% if error_message %}
+		<div class="alert alert-danger alert-dismissable">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">
+				<span class="glyphicon glyphicon-remove"></span>
+			</a>
+			<strong>Error: </strong>{{ error_message }}
+		</div>
+	{% endif %}
+	<div class="title"><h1>Login</h1></div>
+	<div class="content-login">
+		<div class="container">
+			<div class="form-box">
+				<form action="{% url 'login'%}" method="post">{% csrf_token %}
+					<p>Username:</p>
+					<div class="inner-addon left-addon">
+						<i class="glyphicon glyphicon-user"></i>
+						<input placeholder="Username" maxlength="42" name="username" type="text" required>
+					</div>
+					<div>
+						<p>Password:</p>
+						<div class="inner-addon left-addon">
+							<i class="glyphicon glyphicon-lock"></i>
+							<input placeholder="Password" maxlength="66" name="password" type="password" required>
+						</div>
+					</div>
+					<button class="login-register-btn">Login</button>
+				</form>
+				<a href="{% url 'register' %}">Don't have an account?</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block footer %}
+	<script type="text/javascript" href="{% static 'chat/js/login.js' %}"></script>
+{% endblock %}

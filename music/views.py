@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Song, Album
 from chat.models import UserProfile
@@ -18,7 +18,7 @@ class Music(View):
         return render(request, 'music/music.html', context)
 
     def post(self, request):
-        owner = UserProfile.objects.get(id=request.user.id)
+        owner = get_object_or_404(UserProfile, id=request.user.id)
         title = request.POST['title']
         artist = request.POST['artist']
         logo = request.FILES['logo']

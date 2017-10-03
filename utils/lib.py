@@ -1,10 +1,12 @@
-class CountryList:
+from django.shortcuts import render_to_response
 
-    def __init__(self):
-        self.countries = {
-            "AF": "Afghanistan",
-            "AX": "Aland Islands",
-            "AL": "Albania",
+
+class CountryList:
+	def __init__(self):
+		self.countries = {
+			"AF": "Afghanistan",
+			"AX": "Aland Islands",
+			"AL": "Albania",
             "DZ": "Algeria",
             "AS": "American Samoa",
             "AD": "Andorra",
@@ -252,13 +254,29 @@ class CountryList:
             "ZM": "Zambia",
             "ZW": "Zimbabwe"
         }
-        self.countries_inverse = {v: k for k, v in self.countries.items()}
+		self.countries_inverse = {v: k for k, v in self.countries.items()}
 
-    def get_iso_code(self, country_full_name):
-        return self.countries_inverse.get(country_full_name)
+	def get_iso_code(self, country_full_name):
+		return self.countries_inverse.get(country_full_name)
 
-    def get_county(self, iso_code):
-        return self.countries.get(iso_code)
+	def get_county(self, iso_code):
+		return self.countries.get(iso_code)
 
-    def country_list(self):
-        return list(self.countries.values())
+	def country_list(self):
+		return list(self.countries.values())
+
+
+def HttpForbidden(message: str):
+	return render_to_response('chat/error.html', {
+		'error_code': 403,
+		'error_type': 'Forbidden',
+		'error_message': message + ', access denied!'
+	})
+
+
+def HttpNotFound(message: str):
+	return render_to_response('chat/error.html', {
+		'error_code': 404,
+		'error_type': 'Not found',
+		'error_message': message + ' does not exist!'
+	})
