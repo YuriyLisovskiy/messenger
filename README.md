@@ -7,68 +7,33 @@ Also administrator account is not available now.
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
-
-First you need python3 interpreter
-
-If you want to make some changes and add other modules, create a virtual environment:
-
-```
-virtualenv venv
-```
-
-Activate your virtual environment.
-
-Linux (using `source`):
-
-```
-source venv/bin/activate
-```
-
-Windows:
-
-```
-source venv/Scripts/activate
-```
-
-Also there are some modules you need to install to prevent an issues:
-
-```
-dj-static==0.0.6
-Django==1.11.4
-djangorestframework==3.6.4
-olefile==0.44
-Pillow==4.2.1
-pytz==2017.2
-static3==0.7.0
-```
-
-Or you can install all requirement modules from `requirements.txt` file:
-```
-pip install -r requirements.txt
-```
+You need Python3.6
 
 ### Installing and Running
 
-A step by step series of examples that tell you have to get a development env running.
+A step by step series of examples that tell you have to get a development env running:
 
-Clone the repository:
+Linux:
 ```
 git clone https://github.com/YuriyLisovskiy/messenger.git
-```
-
-Go to messenger folder:
-```
 cd messenger
-```
-
-Migrate database:
-```
+virtualenv venv
+venv/bin/activate
+pip install -r requirements.txt
+python manage.py collectstatic
 python manage.py migrate
+python manage.py runserver
 ```
 
-Run the server: 
+Windows:
 ```
+git clone https://github.com/YuriyLisovskiy/messenger.git
+cd messenger
+virtualenv venv
+venv/Scripts/activate
+pip install -r requirements.txt
+python manage.py collectstatic
+python manage.py migrate
 python manage.py runserver
 ```
 Or you can start the server with you own ip address and port.
