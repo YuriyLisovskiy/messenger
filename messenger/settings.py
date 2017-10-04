@@ -106,3 +106,15 @@ STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_LOGIN = 'change_me_in_local_settings'
+EMAIL_PASSWORD = 'change_me_in_local_settings'
+
+
+try:
+    from messenger.local_settings import *
+except ImportError:
+    pass
+
