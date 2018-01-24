@@ -1,20 +1,20 @@
 from chat.models import Message, ChatRoom
 
 
-def checkUsername(username: str):
+def check_username(username: str):
     if len(username) > 2:
         return True
     return False
 
 
-def checkEmail(email, userList):
+def check_email(email, userList):
     for ul in userList:
         if ul.email == email:
             return False
     return True
 
 
-def checkPassword(password: str):
+def check_password(password: str):
     if len(password) > 7:
         return True
     return False
