@@ -1,18 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
-
-
-class UserProfile(User):
-    user_logo = models.ImageField(default='logo_none.png')
-    user_gender = models.CharField(default="", max_length=6)
-    user_birthday_day = models.CharField(default="", max_length=2)
-    user_birthday_month = models.CharField(default="", max_length=2)
-    user_birthday_year = models.CharField(default="", max_length=4)
-    user_country = models.CharField(default="", max_length=100)
-    user_city = models.CharField(default="", max_length=50)
-    user_mobile_number = models.CharField(default="", max_length=10)
-    user_about_me = models.CharField(default="", max_length=999999)
-    user_education = models.CharField(default="", max_length=100)
+from account.models import UserProfile
 
 
 class ChatRoom(models.Model):
@@ -31,9 +18,3 @@ class Message(models.Model):
     author_fn_ln = models.CharField(default="", max_length=100)
     author_logo = models.FileField(default=1)
     author_id = models.CharField(default="", max_length=100)
-
-
-class PhotoLogo(models.Model):
-    owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, default=1)
-    photo = models.ImageField()
-    upload_time = models.CharField(default="", max_length=100)
