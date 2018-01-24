@@ -3,8 +3,8 @@ from account.models import UserProfile
 
 
 class ChatRoom(models.Model):
-    user_author_id = models.CharField(default="", max_length=100)
-    user_friend_id = models.CharField(default="", max_length=100)
+    user_author_id = models.CharField(default="", max_length=255)
+    user_friend_id = models.CharField(default="", max_length=255)
     author = models.ForeignKey(UserProfile, null=True, related_name='author')
     friend = models.ForeignKey(UserProfile, null=True, related_name='friend')
     logo = models.ImageField(default=1)
