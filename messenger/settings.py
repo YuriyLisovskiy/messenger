@@ -14,7 +14,7 @@ SECRET_KEY = 'drl@xbez3ez3+-l(npy5r*ku2z4%7lh4@p_v9y=-lh1fg+a4$6'
 DEBUG = True
 
 # If you don't want run the server on localhost, add here your available host(s).
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.103']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 AUTH_PROFILE_MODULE = 'chat.UserProfile'
 
@@ -23,7 +23,6 @@ AUTH_PROFILE_MODULE = 'chat.UserProfile'
 INSTALLED_APPS = [
     'rest_framework',
     'chat.apps.ChatConfig',
-    'music.apps.MusicConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

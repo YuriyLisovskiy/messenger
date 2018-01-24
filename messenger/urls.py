@@ -12,7 +12,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('chat.urls')),
     url(r'^$', views.index, name='index'),
-    url(r'^', include('music.urls')),
     url(r'^chat_manager/$', views.ChatManager.as_view()),
     url(r'^send_email/$', views.send_email),
     url(r'^register/$', views.UserFormView.as_view(), name='register'),

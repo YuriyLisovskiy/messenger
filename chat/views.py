@@ -25,7 +25,7 @@ def chat(request):
     all_chat_rooms = ChatRoom.objects.all()
     return render(request, "chat/chat.html", {
         'user': user,
-	    'all_users': all_users,
+        'all_users': all_users,
         'all_chat_rooms': all_chat_rooms
     })
 
@@ -36,6 +36,7 @@ class Profile(View):
         if not request.user.is_authenticated:
             return response.HttpForbidden('You are not authenticated')
         try:
+            print(profile_id)
             user_profile = UserProfile.objects.get(pk=profile_id)
         except UserProfile.DoesNotExist:
             return response.HttpNotFound('User')
