@@ -6,6 +6,6 @@ python: 3.6
 
 install: pip install coverage
 
-script: coverage run runner.py test
+script: coverage run manage.py test
 
 after_success: coverage report
