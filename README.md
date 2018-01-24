@@ -1,4 +1,6 @@
 # Messenger
+[![Build Status](https://travis-ci.org/YuriyLisovskiy/Messenger.svg)](https://github.com/YuriyLisovskiy/Messenger)
+[![Coverage Status](https://coveralls.io/repos/github/YuriyLisovskiy/Messenger/badge.svg)](https://github.com/YuriyLisovskiy/Messenger)
 
 This is a simple messenger. Currently it supports creating user profile, editing it and massaging. Also there are music app. But it is not tested, so there can be some bugs.
 Also administrator account is not available now. 
