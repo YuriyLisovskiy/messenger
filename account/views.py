@@ -22,7 +22,7 @@ class Profile(View):
         if user_profile.user_country != '':
             user_profile.user_country = header.CountryList().get_county(user_profile.user_country)
         user_logos = PhotoLogo.objects.filter(owner__username=user_profile.username)
-        return render(request, "chat/user_profile.html", {
+        return render(request, "account/user_profile.html", {
             'user_profile': user_profile,
             'user_logos': user_logos,
         })
@@ -223,7 +223,7 @@ class EditUserProfile(View):
             return response.HttpNotFound('User')
         if user.user_country != '':
             user.user_country = header.COUNTRY_LIST.get_county(user.user_country)
-        return render(request, "chat/edit_profile.html", {
+        return render(request, "account/edit_profile.html", {
             'user_data': user,
             'country_list': header.COUNTRY_LIST.country_list()
         })
@@ -261,7 +261,7 @@ class EditUserProfile(View):
         user.save()
         if user.user_country != '':
             user.user_country = header.COUNTRY_LIST.get_county(user.user_country)
-        return render(request, "chat/edit_profile.html", {
+        return render(request, "account/edit_profile.html", {
             'user_data': user,
             'country_list': header.COUNTRY_LIST.country_list(),
             'response_msg': 'Profile changes has been saved.'
@@ -323,6 +323,6 @@ def login_user(request):
             if user.is_active:
                 login(request, user)
                 return redirect('/user/' + str(request.user.id))
-            return render(request, "chat/login_form.html", {'error_message': 'Your account has been disabled'})
-        return render(request, "chat/login_form.html", {'error_message': 'Invalid login or password'})
-    return render(request, "chat/login_form.html")
+            return render(request, "account/login_form.html", {'error_message': 'Your account has been disabled'})
+        return render(request, "account/login_form.html", {'error_message': 'Invalid login or password'})
+    return render(request, "account/login_form.html")

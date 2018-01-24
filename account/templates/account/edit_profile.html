@@ -3,7 +3,7 @@
 {% block title %}Edit profile{% endblock %}
 {% block head %}
 	{{ block.super }}
-	<link rel="stylesheet" href="{% static 'chat/css/edit_profile.css' %}">
+	<link rel="stylesheet" href="{% static 'account/css/edit_profile.css' %}">
 {% endblock %}
 {% block edit_profile_active %}active{% endblock %}
 {% block body %}
@@ -89,5 +89,5 @@
 		var mobile = "{{ user_data.user_mobile_number }}";
 		var about = "{{ user_data.user_about_me }}";
 	</script>
-	<script type="text/javascript" src="{% static 'chat/js/edit_profile.js' %}"></script>
+	<script type="text/javascript" src="{% static 'account/js/edit_profile.js' %}"></script>
 {% endblock %}
