@@ -6,6 +6,7 @@ db.sqlite3
 media/
 doc/
 migrations/
+/static
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
