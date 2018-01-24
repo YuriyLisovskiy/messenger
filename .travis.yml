@@ -6,6 +6,9 @@ python: 3.6
 
 install: pip install -r requirements.txt
 
-script: coverage run manage.py test
+script:
+  - python manage.py makemigrations
+  - python manage.py migrate
+  - coverage run manage.py test
 
 after_success: coverage report
