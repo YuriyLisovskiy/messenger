@@ -1,7 +1,7 @@
 # Messenger
+[![Licence Status](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 [![Build Status](https://travis-ci.org/YuriyLisovskiy/Messenger.svg)](https://github.com/YuriyLisovskiy/Messenger)
 [![Coverage Status](https://coveralls.io/repos/github/YuriyLisovskiy/Messenger/badge.svg)](https://github.com/YuriyLisovskiy/Messenger)
-[![Licence Status](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 
 ### Download and Configure
 
@@ -17,7 +17,7 @@ python manage.py migrate
 
 Windows:
 ```
-git clone https://github.com/YuriyLisovskiy/messenger.git
+git clone https://github.com/YuriyLisovskiy/Messenger.git
 cd Messenger/
 virtualenv venv
 venv/Scripts/activate
