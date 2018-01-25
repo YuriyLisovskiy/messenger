@@ -112,6 +112,7 @@ EMAIL_PORT = 587
 EMAIL_LOGIN = 'change_me_in_local_settings'
 EMAIL_PASSWORD = 'change_me_in_local_settings'
 
+LOGIN_REDIRECT_URL = '/login/'
 
 try:
     from messenger.local_settings import *
