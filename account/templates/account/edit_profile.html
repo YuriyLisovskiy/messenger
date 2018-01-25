@@ -20,23 +20,27 @@
 			<table>
 				<tr>
 					<th><p>First name:</p></th>
-					<th><input placeholder="Your first name..." name="first_name" id="first_name" required></th>
+					<th>
+                        <input placeholder="Your first name..." name="first_name" id="first_name" {% if user_data.first_name %}value="{{ user_data.first_name }}" {% endif %}required>
+                    </th>
 				</tr>
 				<tr>
 					<th><p>Last name:</p></th>
-					<th><input placeholder="Your last name..." name="last_name" id="last_name" required></th>
+					<th><input placeholder="Your last name..." name="last_name" id="last_name" {% if user_data.last_name %}value="{{ user_data.last_name }}" {% endif %}required></th>
 				</tr>
 				<tr>
 					<th><p>City:</p></th>
-					<th><input placeholder="Your current city..." name="city" id="city"></th>
+					<th>
+                        <input placeholder="Your current city..." name="city" id="city"{% if user_data.city %} value="{{ user_data.city }}"{% endif %}>
+                    </th>
 				</tr>
 				<tr>
 					<th><p>Country:</p></th>
 					<th>
 						<select class="select-country" id="country" name="country">
-							<option></option>
+							<option {% if not user_data.country %}selected="selected"{% endif %}></option>
 							{% for country in country_list %}
-								<option>{{ country }}</option>
+								<option{% if user_data.country and user_data.country == country %} selected{% endif %}>{{ country }}</option>
 							{% endfor %}
 						</select>
 					</th>
@@ -44,30 +48,36 @@
 				<tr>
 					<th><p>Birthday:</p></th>
 					<th>
-						<input type="date" min="1950-01-01" name="birthday" id="birthday">
+						<input type="date" min="1950-01-01" name="birthday" id="birthday"{% if user_data.birthday %} value="{{ user_data.birthday | date }}"{% endif %}>
 					</th>
 				</tr>
 				<tr>
 					<th><p>Gender:</p></th>
 					<th>
 						<select id="gender" name="gender" required>
-							<option></option>
-							<option>Male</option>
-							<option>Female</option>
+							<option{% if not user_data.gender %} selected{% endif %}></option>
+							<option{% if user_data.gender and user_data.gender == 'Male' %} selected{% endif %}>Male</option>
+							<option{% if user_data.gender and user_data.gender == 'Female' %} selected{% endif %}>Female</option>
 						</select>
 					</th>
 				</tr>
 				<tr>
 					<th><p>Education:</p></th>
-					<th><input placeholder="Your place of education..." name="education" id="education"></th>
+					<th>
+                        <input placeholder="Your place of education..." name="education" id="education"{% if user_data.education %} value="{{ user_data.education }}"{% endif %}>
+                    </th>
 				</tr>
 				<tr>
 					<th><p>Phone:</p></th>
-					<th><input placeholder="Your mobile number..." oninput="this.value=this.value.replace(/[^0-9]/g,'');" name="mobile_number" id="mobile_number" maxlength="10"></th>
+					<th>
+                        <input placeholder="Your mobile number..." oninput="this.value=this.value.replace(/[^0-9]/g,'');" name="mobile_number" id="mobile_number" maxlength="10"{% if user_data.mobile_number %} value="{{ user_data.mobile_number }}"{% endif %}>
+                    </th>
 				</tr>
 				<tr>
 					<th><p>About me:</p></th>
-					<th><textarea placeholder="Your short description..." name="about_me" id="about_me"></textarea></th>
+					<th>
+                        <textarea placeholder="Your short description..." name="about_me" id="about_me">{% if user_data.about %}{{ user_data.about }}{% endif %}</textarea>
+                    </th>
 				</tr>
 			</table>
 			<input type="submit" value="Save" id="save">
@@ -75,19 +85,4 @@
 	</div>
 {% endblock %}
 {% block footer %}
-	<script type="text/javascript">
-		var first_name = "{{ user_data.first_name }}";
-		var last_name = "{{ user_data.last_name }}";
-		var status = "{{ user_data.user_status }}";
-		var city = "{{ user_data.user_city }}";
-		var country = "{{ user_data.user_country }}";
-		var b_day = "{{ user_data.user_birthday_day }}";
-		var b_month = "{{ user_data.user_birthday_month }}";
-		var b_year = "{{ user_data.user_birthday_year }}";
-		var gender = "{{ user_data.user_gender }}";
-		var education = "{{ user_data.user_education }}";
-		var mobile = "{{ user_data.user_mobile_number }}";
-		var about = "{{ user_data.user_about_me }}";
-	</script>
-	<script type="text/javascript" src="{% static 'account/js/edit_profile.js' %}"></script>
 {% endblock %}

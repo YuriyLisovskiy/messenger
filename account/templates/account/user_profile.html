@@ -13,7 +13,7 @@
 			<div class="popup-inner">
 				<h3 class="title">Change main photo</h3>
 				<div class="change-photo-form">
-					<img class="uploaded-photo" id="uploaded-photo-logo" src="{{ user_profile.user_logo.url }}">
+					<img class="uploaded-photo" id="uploaded-photo-logo" src="{{ user_profile.logo.url }}">
 					<form method="post" enctype="multipart/form-data" id="change-photo-form">{% csrf_token %}
 						<label class="btn btn-default btn-file">
 							Upload photo <input type="file" style="display: none;" id="img-input-logo" name="logo">
@@ -42,7 +42,7 @@
 	</div>
 	<div class="content">
 		<div class="left-part">
-			{% if user_profile.user_logo %}
+			{% if user_profile.logo %}
 				<div class="photo-logo" style="background-image: url({{ user_profile.user_logo.url }});">
 					{% if user_profile.username == user.username %}
 						<button data-popup-open="popup-logo" class="add-photo logo">
@@ -81,7 +81,7 @@
 				</div>
 				{% if user_profile.username == user.username %}
 					<div class="edit-profile">
-						<a href="{% url 'edit_profile' %}">
+						<a href="{% url 'edit_profile' user.id %}">
 							<input type="button" value="Edit profile">
 						</a>
 					</div>
@@ -91,8 +91,8 @@
 		<div class="right-part">
 			<div class="about">
 				<p class="title">About</p>
-				{% if user_profile.user_about_me %}
-					<p class="data">{{ user_profile.user_about_me }}</p>
+				{% if user_profile.about %}
+					<p class="data">{{ user_profile.about }}</p>
 				{% else %}
 					<p class="data-none">Nothing to display</p>
 				{% endif %}
@@ -101,42 +101,42 @@
 				<p class="title">Info</p>
 				<div class="data">
 					<table>
-						{% if user_profile.user_city %}
+						{% if user_profile.city %}
 							<tr>
 								<th>City:</th>
-								<th>{{ user_profile.user_city }}</th>
+								<th>{{ user_profile.city }}</th>
 							</tr>
 						{% endif %}
-						{% if user_profile.user_country %}
+						{% if user_profile.country %}
 							<tr>
 								<th>Country:</th>
-								<th>{{ user_profile.user_country }}</th>
+								<th>{{ user_profile.country }}</th>
 							</tr>
 						{% endif %}
-						{% if user_profile.user_birthday_day != 0 and user_profile.user_birthday_month %}
+						{% if user_profile.birthday %}
 							<tr>
 								<th>Birthday:</th>
 								<th>
-									{{ user_profile.user_birthday_day }}.{{ user_profile.user_birthday_month }}, {{ user_profile.user_birthday_year }}
+                                    {{ user_profile.birthday | date }}
 								</th>
 							</tr>
 						{% endif %}
-						{% if user_profile.user_gender %}
+						{% if user_profile.gender %}
 							<tr>
 								<th>Gender:</th>
-								<th>{{ user_profile.user_gender }}</th>
+								<th>{{ user_profile.gender }}</th>
 							</tr>
 						{% endif %}
-						{% if user_profile.user_education %}
+						{% if user_profile.education %}
 							<tr>
 								<th>Education:</th>
-								<th>{{ user_profile.user_education }}</th>
+								<th>{{ user_profile.education }}</th>
 							</tr>
 						{% endif %}
-						{% if user_profile.user_mobile_number %}
+						{% if user_profile.mobile_number %}
 							<tr>
 								<th>Mobile number:</th>
-								<th>+38{{ user_profile.user_mobile_number }}</th>
+								<th>+38{{ user_profile.mobile_number }}</th>
 							</tr>
 						{% endif %}
 						{% if user_profile.email %}

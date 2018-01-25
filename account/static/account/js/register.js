@@ -1,13 +1,4 @@
 $(document).ready(function () {
-    document.getElementById('id_first_name').required = true;
-    document.getElementById('id_first_name').placeholder = "First name";
-    document.getElementById('id_last_name').required = true;
-    document.getElementById('id_last_name').placeholder = "Last name";
-    document.getElementById('id_email').required = true;
-    document.getElementById('id_email').placeholder = "Email";
-    document.getElementById('id_password').placeholder = "Password";
-    document.getElementById('id_username').placeholder = "Username";
-
     var generated_code;
     $('#register').click(function register() {
         var received_code = document.getElementById('received-code');
@@ -17,9 +8,9 @@ $(document).ready(function () {
             generated_code = Math.random().toString(36).slice(2);
             send_code(
                 generated_code,
-                document.getElementById('id_email').value,
-                document.getElementById('id_password').value,
-                document.getElementById('id_username').value);
+                document.getElementById('email').value,
+                document.getElementById('password').value,
+                document.getElementById('username').value);
         }
     });
     function send_code(code, email, password, username) {

@@ -16,7 +16,7 @@ urlpatterns = [
 	url(r'^$', chat_views.index, name='index'),
 	url(r'^chat_manager/?$', chat_views.ChatManager.as_view()),
 	url(r'^send_email/?$', chat_views.send_email),
-	url(r'^register/?$', account_views.UserFormView.as_view(), name='register'),
+	url(r'^register/?$', account_views.RegistrationView.as_view(), name='register'),
 	url(r'^login/?$', account_views.login_user, name='login'),
 	url(r'^logout/?$', account_views.logout_user, name='logout'),
 ]

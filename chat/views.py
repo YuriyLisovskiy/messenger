@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from utils import functions
 from messenger.settings import *
-from account.forms import UserProfile
+from account.models import UserProfile
 from .models import Message, ChatRoom
 from utils.responses import NOT_FOUND
 from utils.view_modifiers import auth_required
@@ -75,7 +75,7 @@ class ChatManager(View):
 		try:
 			ChatRoom.objects.get(author__id=request.user.id, friend__id=friend_id).delete()
 		except ChatRoom.DoesNotExist:
-			return NOT_FOUND
+			return NOT_FOUND()
 		return JsonResponse({'success': 'Chat room has been deleted.'})
 
 	@auth_required
@@ -167,12 +167,13 @@ def send_email(request):
 		g_c = request.GET['generated_code']
 		request.session['gen_code'] = g_c
 		message_content = """This is data for signing in Your account:\n\n Login:           {}\n Password:    {}\n\n
-							Do not show this message to anyone to prevent stealing your account!\n\n\n
-							The last step you should perform is to enter this code: " + g_c + ".\n\n\n
-							Thank You for registering on our website.\n
-							Best regards, messenger support.""".format(
+Do not show this message to anyone to prevent stealing your account!\n\n\n
+The last step you should perform is to enter this code: "{}".\n\n\n
+Thank You for registering on our website.\n
+Best regards, messenger support.""".format(
 			request.GET['username'],
-			request.GET['password']
+			request.GET['password'],
+			g_c
 		)
 		support_email = "mymessengerhelp@gmail.com"
 		message_subject = 'Messenger sign up'

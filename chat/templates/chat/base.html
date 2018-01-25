@@ -9,8 +9,8 @@
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="{% static 'chat/css/base.css' %}" />
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Satisfy" />
-	<script type="text/javascript" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
-	<script type="text/javascript" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.js"></script>
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -83,7 +83,7 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li class="{% block edit_profile_active %}{% endblock %}">
-                                <a href="{% url 'edit_profile' %}">
+                                <a href="{% url 'edit_profile' user.id %}">
                                     <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;
                                     Edit profile
                                 </a>
