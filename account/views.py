@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import UserProfile, PhotoLogo
 from chat.models import ChatRoom, Message
 from utils import header, functions
-from utils.responses import NOT_FOUND, PERMISSION_DENIED, BAD_REQUEST
+from utils.responses import NOT_FOUND, BAD_REQUEST
 from utils.view_modifiers import auth_required
 
 
@@ -327,7 +327,7 @@ def login_user(request):
 			if user is not None:
 				if user.is_active:
 					login(request, user)
-					profiles = UserProfile.filter_by(pk=user.id).first()
+					profiles = UserProfile.filter_by(pk=user.id)
 					if profiles:
 						return redirect('/account/user/id=' + str(profiles.first().id))
 					else:

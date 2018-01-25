@@ -1,13 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils.datetime_safe import date
 from django.core.exceptions import ObjectDoesNotExist
 
 
 class UserProfile(User):
 	logo = models.ImageField(default='logo_none.jpg')
 	gender = models.CharField(max_length=6, blank=True)
-	birthday = models.DateField(default=date.today)
+	birthday = models.DateField(blank=True, null=True)
 	country = models.CharField(max_length=100, blank=True)
 	city = models.CharField(max_length=50, blank=True)
 	mobile_number = models.CharField(max_length=10, blank=True)
