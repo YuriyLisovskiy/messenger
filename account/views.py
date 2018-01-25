@@ -267,7 +267,7 @@ class RegistrationView(View):
 
 	def post(self, request):
 		if request.user.is_authenticated:
-			return redirect('/account/user/id=' + str(UserProfile.filter_by(user=request.user).first.id))
+			return redirect('/account/user/id=' + str(UserProfile.filter_by(pk=request.user.id).first().id))
 		form = request.POST
 		for key in ['first_name', 'last_name', 'email', 'username', 'password', 'code']:
 			if key not in form.keys():
@@ -317,7 +317,7 @@ def login_user(request):
 	login_form = 'account/login_form.html'
 	if request.method == 'GET':
 		if request.user.is_authenticated:
-			return redirect('/account/user/id=' + str(UserProfile.filter_by(user=request.user).first.id))
+			return redirect('/account/user/id=' + str(UserProfile.filter_by(pk=request.user.id).first().id))
 		return render(request, login_form)
 	if request.method == 'POST':
 		username = request.POST.get('username')
@@ -327,9 +327,9 @@ def login_user(request):
 			if user is not None:
 				if user.is_active:
 					login(request, user)
-					profiles = UserProfile.filter_by(user=user)
+					profiles = UserProfile.filter_by(pk=user.id).first()
 					if profiles:
-						return redirect('/account/user/id=' + str(profiles.first.id))
+						return redirect('/account/user/id=' + str(profiles.first().id))
 					else:
 						return NOT_FOUND()
 				else:

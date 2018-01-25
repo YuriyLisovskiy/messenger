@@ -5,7 +5,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 class UserProfile(User):
-	user = models.OneToOneField(User)
 	logo = models.ImageField(default='logo_none.jpg')
 	gender = models.CharField(max_length=6, blank=True)
 	birthday = models.DateField(default=date.today)
@@ -24,10 +23,10 @@ class UserProfile(User):
 			return None
 	
 	@staticmethod
-	def filter_by(user=None, gender=None, birthday=None, country=None, city=None, education=None, **kwargs):
+	def filter_by(pk=None, gender=None, birthday=None, country=None, city=None, education=None, **kwargs):
 		query = {}
-		if user:
-			query['user'] = user
+		if pk:
+			query['pk'] = pk
 		if gender:
 			query['gender'] = gender
 		if birthday:
@@ -49,9 +48,11 @@ class UserProfile(User):
 	def add(first_name, last_name, username, password, email, city=None, country=None, birthday=None, gender=None,
 			education=None,	mobile=None, about=None, **kwargs):
 		user_profile = UserProfile()
-		user_profile.user = User.objects.create_user(username=username, email=email, password=password)
 		user_profile.first_name = first_name
 		user_profile.last_name = last_name
+		user_profile.email = email
+		user_profile.username = username
+		user_profile.set_password(password)
 		if city:
 			user_profile.city = city
 		if country:
@@ -66,7 +67,6 @@ class UserProfile(User):
 			user_profile.about = about
 		if birthday:
 			user_profile.birthday = birthday
-		user_profile.user.save()
 		user_profile.save()
 		return user_profile
 
