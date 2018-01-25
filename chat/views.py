@@ -8,7 +8,6 @@ from datetime import datetime
 from utils import functions, response
 import smtplib
 from email.mime.text import MIMEText
-from rest_framework.views import APIView
 from messenger.settings import *
 
 
@@ -66,7 +65,7 @@ class SearchPeople(View):
         return JsonResponse(serializer.data, safe=False)
 
 
-class ChatManager(APIView):
+class ChatManager(View):
 
     def delete(self, request):
         if not request.user.is_authenticated:
@@ -161,7 +160,7 @@ def send_email(request):
         return redirect('index')
     if 'generated_code' in request.GET and 'user_email' in request.GET:
         usr_email = request.GET['user_email']
-        if not functions.checkEmail(usr_email, UserProfile.objects.all()):
+        if not functions.check_email(usr_email, UserProfile.objects.all()):
             return JsonResponse({
                 'error_code': "222",
                 'name': "User with this email address already exists!"
