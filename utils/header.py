@@ -262,4 +262,5 @@ class CountryList:
 	def country_list(self):
 		return list(self.countries.values())
 
+
 COUNTRY_LIST = CountryList()

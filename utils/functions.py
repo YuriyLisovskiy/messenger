@@ -7,8 +7,8 @@ def check_username(username: str):
     return False
 
 
-def check_email(email, userList):
-    for ul in userList:
+def check_email(email, users):
+    for ul in users:
         if ul.email == email:
             return False
     return True
