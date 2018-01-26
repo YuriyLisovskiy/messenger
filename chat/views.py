@@ -166,10 +166,11 @@ def send_email(request):
 			})
 		g_c = request.GET['generated_code']
 		request.session['gen_code'] = g_c
-		message_content = """This is data for signing in Your account:\n\n Login:           {}\n Password:    {}\n\n
-Do not show this message to anyone to prevent stealing your account!\n\n\n
-The last step you should perform is to enter this code: "{}".\n\n\n
-Thank You for registering on our website.\n
+		message_content = """This is data for signing in Your account:
+ Login:           {}\n Password:    {}\n
+Do not show this message to anyone to prevent stealing your account!
+The last step you should perform is to enter this code: "{}".\n
+Thank You for registering on our website.
 Best regards, messenger support.""".format(
 			request.GET['username'],
 			request.GET['password'],

@@ -117,3 +117,42 @@ class PhotoLogo(models.Model):
 			return photo
 		except ObjectDoesNotExist:
 			return None
+		
+	@staticmethod
+	def filter_by(owner=None, img=None, upload_time=None, **kwargs):
+		query = {}
+		if owner:
+			query['owner'] = owner
+		if img:
+			query['photo'] = img
+		if upload_time:
+			query['upload_time'] = upload_time
+		query.update(**kwargs)
+		try:
+			photos = PhotoLogo.objects.filter(**query)
+			return photos
+		except ObjectDoesNotExist:
+			return None
+	
+	@staticmethod
+	def add(owner, photo, upload_time, **kwargs):
+		new_photo = PhotoLogo()
+		new_photo.owner = owner
+		new_photo.photo = photo
+		new_photo.upload_time = upload_time
+		new_photo.save()
+		return new_photo
+	
+	@staticmethod
+	def edit(pk, owner=None, photo=None, upload_time=None, **kwargs):
+		photo_to_edit = PhotoLogo.get_by_id(pk)
+		if not photo_to_edit:
+			return None
+		if owner:
+			photo_to_edit.owner = owner
+		if photo:
+			photo_to_edit.photo = photo
+		if upload_time:
+			photo_to_edit.upload_time = upload_time
+		photo_to_edit.save()
+		return photo_to_edit

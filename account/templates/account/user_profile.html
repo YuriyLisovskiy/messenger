@@ -43,7 +43,7 @@
 	<div class="content">
 		<div class="left-part">
 			{% if user_profile.logo %}
-				<div class="photo-logo" style="background-image: url({{ user_profile.user_logo.url }});">
+				<div class="photo-logo" style="background-image: url({{ user_profile.logo.url }});">
 					{% if user_profile.username == user.username %}
 						<button data-popup-open="popup-logo" class="add-photo logo">
 							<span class="glyphicon glyphicon-camera"></span>&nbsp;

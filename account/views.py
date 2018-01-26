@@ -19,7 +19,7 @@ class Profile(View):
 		if user_profile:
 			if user_profile.country != '':
 				user_profile.country = header.CountryList().get_county(user_profile.country)
-			user_logos = PhotoLogo.objects.filter(owner__username=user_profile.username)
+			user_logos = PhotoLogo.filter_by(owner=user_profile)
 			return render(request, "account/user_profile.html", {
 				'user_profile': user_profile,
 				'user_logos': user_logos,
@@ -31,11 +31,10 @@ class Profile(View):
 		if 'message' in request.POST:
 			author_id, friend_id = request.POST['data'].split()
 			msg = request.POST['message']
-			try:
-				author = UserProfile.objects.get(id=author_id)
-				friend = UserProfile.objects.get(id=friend_id)
-			except UserProfile.DoesNotExist:
-				return NOT_FOUND
+			author = UserProfile.filter_by(pk=author_id).first()
+			friend = UserProfile.filter_by(id=friend_id).first()
+			if not author or not friend:
+				return BAD_REQUEST()
 			author_initials = author.first_name[0] + author.last_name[0]
 			msg_time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + datetime.now().strftime("%d %b %Y")[:11]
 			try:
@@ -179,14 +178,13 @@ class Profile(View):
 				return redirect('/user/' + str(request.user.id))
 			return redirect('/user/' + str(request.user.id))
 		else:
-			try:
-				user_profile = UserProfile.objects.get(id=request.user.id)
-			except UserProfile.DoesNotExist:
-				return response.HttpNotFound('User')
+			user_profile = UserProfile.filter_by(pk=request.user.id).first()
+			if not user_profile:
+				return NOT_FOUND()
 			upload_time = str(datetime.now())[11:16] + "  |  " + str(datetime.now().strftime("%d %b %Y"))[:11]
 			if 'logo' in request.FILES:
 				request_logo = request.FILES['logo']
-				user_profile.user_logo = request_logo
+				user_profile.logo = request_logo
 				try:
 					chat_rooms = ChatRoom.objects.filter(friend=user_profile)
 					for room in chat_rooms:
@@ -201,13 +199,14 @@ class Profile(View):
 						message.save()
 				except Message.DoesNotExist:
 					pass
-				PhotoLogo.objects.create(
-					owner=user_profile,
-					photo=request_logo,
-					upload_time=upload_time
-				)
+				data = {
+					'owner': user_profile,
+					'photo': request_logo,
+					'upload_time': upload_time
+				}
+				PhotoLogo.add(**data)
 			user_profile.save()
-			return redirect('/user/' + str(request.user.id))
+			return redirect('/account/user/id=' + str(request.user.id))
 
 
 class EditUserProfile(View):
@@ -317,7 +316,7 @@ def login_user(request):
 	login_form = 'account/login_form.html'
 	if request.method == 'GET':
 		if request.user.is_authenticated:
-			return redirect('/account/user/id=' + str(UserProfile.filter_by(pk=request.user.id).first().id))
+			return redirect('/account/user/id=' + str(request.user.id))
 		return render(request, login_form)
 	if request.method == 'POST':
 		username = request.POST.get('username')
@@ -327,11 +326,7 @@ def login_user(request):
 			if user is not None:
 				if user.is_active:
 					login(request, user)
-					profiles = UserProfile.filter_by(pk=user.id)
-					if profiles:
-						return redirect('/account/user/id=' + str(profiles.first().id))
-					else:
-						return NOT_FOUND()
+					return redirect('/account/user/id=' + str(request.user.id))
 				else:
 					context = {
 						'error_message': 'Your account has been disabled'
