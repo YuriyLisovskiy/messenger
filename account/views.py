@@ -6,13 +6,16 @@ from django.contrib.auth import authenticate, login, logout
 
 from .models import UserProfile, PhotoLogo
 from chat.models import ChatRoom, Message
-from utils import header, functions
+from utils import header
+from utils.helpers import password_is_valid, username_is_valid, email_does_not_exist
 from utils.responses import NOT_FOUND, BAD_REQUEST
 from utils.view_modifiers import auth_required
 
 
 class Profile(View):
-
+	
+	template_name = 'account/user_profile.html'
+	
 	@auth_required
 	def get(self, request, profile_id):
 		user_profile = UserProfile.get_by_id(profile_id)
@@ -20,7 +23,7 @@ class Profile(View):
 			if user_profile.country != '':
 				user_profile.country = header.CountryList().get_county(user_profile.country)
 			user_logos = PhotoLogo.filter_by(owner=user_profile)
-			return render(request, "account/user_profile.html", {
+			return render(request, self.template_name, {
 				'user_profile': user_profile,
 				'user_logos': user_logos,
 			})
@@ -31,182 +34,146 @@ class Profile(View):
 		if 'message' in request.POST:
 			author_id, friend_id = request.POST['data'].split()
 			msg = request.POST['message']
-			author = UserProfile.filter_by(pk=author_id).first()
-			friend = UserProfile.filter_by(id=friend_id).first()
+			author = UserProfile.filter_by(pk=author_id)
+			friend = UserProfile.filter_by(id=friend_id)
 			if not author or not friend:
 				return BAD_REQUEST()
-			author_initials = author.first_name[0] + author.last_name[0]
+			author = author.first()
+			friend = friend.first()
 			msg_time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + datetime.now().strftime("%d %b %Y")[:11]
-			try:
-				author_chat_room = ChatRoom.objects.get(
-					friend__id=friend_id,
-					author__id=author_id
-				)
-			except ChatRoom.DoesNotExist:
-				author_chat_room = None
-			try:
-				friend_chat_room = ChatRoom.objects.get(
-					friend__id=author_id,
-					author__id=friend_id
-				)
-			except ChatRoom.DoesNotExist:
-				friend_chat_room = None
+			filter_data = {
+				'author': author,
+				'friend': friend
+			}
+			author_chat_room = ChatRoom.filter_by(**filter_data)
+			filter_data = {
+				'author': friend,
+				'friend': author
+			}
+			friend_chat_room = ChatRoom.filter_by(**filter_data)
 			if not author_chat_room and not friend_chat_room:
 				if author == friend:
 					room_data = {
 						'author': author,
 						'friend': author,
-						'author_id': author_id,
-						'friend_id': author_id,
 						'logo': author.user_logo
 					}
-					chat_room = functions.create_chat_room(room_data)
+					chat_room = ChatRoom.add(**room_data)
 					if msg != "":
 						message_data = {
 							'chat_room': chat_room,
-							'message': msg,
-							'message_time': msg_time,
-							'author_username': author.username,
-							'author_initials': author_initials,
-							'author_logo': author.user_logo,
-							'author_id': author_id
+							'author': author,
+							'msg': msg,
+							'time': msg_time,
 						}
-						functions.create_message(message_data)
-					return redirect('/user/' + str(request.user.id))
+						Message.add(**message_data)
+					return redirect('/account/user/id=' + str(request.user.id))
 				room_data = {
 					'author': author,
 					'friend': friend,
-					'author_id': author_id,
-					'friend_id': friend_id,
 					'logo': friend.user_logo
 				}
-				chat_room = functions.create_chat_room(room_data)
+				chat_room = ChatRoom.add(**room_data)
 				if msg != "":
 					message_data = {
 						'chat_room': chat_room,
-						'message': msg,
-						'message_time': msg_time,
-						'author_username': author.username,
-						'author_initials': author_initials,
-						'author_logo': author.user_logo,
-						'author_id': author_id
+						'author': author,
+						'mag': msg,
+						'time': msg_time,
 					}
-					functions.create_message(message_data)
+					Message.add(**message_data)
 				room_data = {
 					'author': friend,
 					'friend': author,
-					'author_id': friend_id,
-					'friend_id': author_id,
 					'logo': author.user_logo
 				}
-				chat_room = functions.create_chat_room(room_data)
+				ChatRoom.add(**room_data)
 				if msg != "":
 					message_data = {
 						'chat_room': chat_room,
-						'message': msg,
-						'message_time': msg_time,
-						'author_username': author.username,
-						'author_initials': author_initials,
-						'author_logo': author.user_logo,
-						'author_id': author_id
+						'author': author,
+						'msg': msg,
+						'time': msg_time,
 					}
-					functions.create_message(message_data)
-					return redirect('/user/' + str(request.user.id))
+					Message.add(**message_data)
+					return redirect('/account/user/id=' + str(request.user.id))
 			if msg != "":
 				if author_chat_room:
 					message_data = {
 						'chat_room': author_chat_room,
-						'message': msg,
-						'message_time': msg_time,
-						'author_username': author.username,
-						'author_initials': author_initials,
-						'author_logo': author.user_logo,
-						'author_id': author_id
+						'author': author,
+						'msg': msg,
+						'time': msg_time,
 					}
-					functions.create_message(message_data)
+					Message.add(**message_data)
 					if not friend_chat_room:
 						room_data = {
 							'author': friend,
 							'friend': author,
-							'author_id': friend_id,
-							'friend_id': author_id,
 							'logo': author.user_logo
 						}
-						chat_room = functions.create_chat_room(room_data)
+						chat_room = ChatRoom.add(**room_data)
 						message_data = {
 							'chat_room': chat_room,
-							'message': msg,
-							'message_time': msg_time,
-							'author_username': author.username,
-							'author_initials': author_initials,
-							'author_logo': author.user_logo,
-							'author_id': author_id
+							'author': author,
+							'msg': msg,
+							'time': msg_time,
 						}
-						functions.create_message(message_data)
+						Message.add(**message_data)
 				if friend_chat_room:
 					if author_chat_room != friend_chat_room:
 						message_data = {
 							'chat_room': friend_chat_room,
-							'message': msg,
-							'message_time': msg_time,
-							'author_username': author.username,
-							'author_initials': author_initials,
-							'author_logo': author.user_logo,
-							'author_id': author_id
+							'author': author,
+							'msg': msg,
+							'time': msg_time,
 						}
-						functions.create_message(message_data)
+						Message.add(**message_data)
 						if not author_chat_room:
 							room_data = {
 								'author': author,
 								'friend': friend,
-								'author_id': author_id,
-								'friend_id': friend_id,
 								'logo': friend.user_logo
 							}
-							chat_room = functions.create_chat_room(room_data)
+							chat_room = ChatRoom.add(**room_data)
 							message_data = {
 								'chat_room': chat_room,
-								'message': msg,
-								'message_time': msg_time,
-								'author_username': author.username,
-								'author_initials': author_initials,
-								'author_logo': author.user_logo,
-								'author_id': author_id
+								'author': author,
+								'msg': msg,
+								'time': msg_time,
 							}
-							functions.create_message(message_data)
-					return redirect('/user/' + str(request.user.id))
-				return redirect('/user/' + str(request.user.id))
-			return redirect('/user/' + str(request.user.id))
-		else:
-			user_profile = UserProfile.filter_by(pk=request.user.id).first()
+							Message.add(**message_data)
+					return redirect('/account/user/id=' + str(request.user.id))
+				return redirect('/account/user/id=' + str(request.user.id))
+			return redirect('/account/user/id=' + str(request.user.id))
+		elif 'logo' in request.FILES:
+			user_profile = UserProfile.filter_by(pk=request.user.id)
 			if not user_profile:
 				return NOT_FOUND()
+			user_profile = user_profile.first()
 			upload_time = str(datetime.now())[11:16] + "  |  " + str(datetime.now().strftime("%d %b %Y"))[:11]
-			if 'logo' in request.FILES:
-				request_logo = request.FILES['logo']
-				user_profile.logo = request_logo
-				try:
-					chat_rooms = ChatRoom.objects.filter(friend=user_profile)
-					for room in chat_rooms:
-						room.logo = request_logo
-						room.save()
-				except ChatRoom.DoesNotExist:
-					pass
-				try:
-					messages = Message.objects.filter(author_id=user_profile.id)
-					for message in messages:
-						message.author_logo = request_logo
-						message.save()
-				except Message.DoesNotExist:
-					pass
-				data = {
-					'owner': user_profile,
-					'photo': request_logo,
-					'upload_time': upload_time
-				}
-				PhotoLogo.add(**data)
+			request_logo = request.FILES['logo']
+			user_profile.logo = request_logo
 			user_profile.save()
+			chat_rooms = ChatRoom.filter_by(friend=user_profile)
+			if chat_rooms:
+				for room in chat_rooms:
+					room.logo = request_logo
+					room.save()
+			messages = Message.filter_by(author=user_profile)
+			if messages:
+				for message in messages:
+					message.author_logo = request_logo
+					message.save()
+			data = {
+				'owner': user_profile,
+				'photo': request_logo,
+				'upload_time': upload_time
+			}
+			PhotoLogo.add(**data)
 			return redirect('/account/user/id=' + str(request.user.id))
+		else:
+			return BAD_REQUEST()
 
 
 class EditUserProfile(View):
@@ -279,11 +246,11 @@ class RegistrationView(View):
 			email = form.get('email')
 			generated_code = form.get('code')
 			errors = {}
-			if not functions.check_username(username):
+			if not username_is_valid(username):
 				errors['username'] = 'username must be 3 characters or more'
-			if not functions.check_email(email, UserProfile.objects.all()):
+			if not email_does_not_exist(email, UserProfile.objects.all()):
 				errors['email'] = 'account with this email address already exists'
-			if not functions.check_password(password):
+			if not password_is_valid(password):
 				errors['password'] = 'password must be 8 characters or more'
 			if generated_code != request.session['gen_code']:
 				errors['code'] = 'incorrect received code'

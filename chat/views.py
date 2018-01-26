@@ -4,13 +4,13 @@ from email.mime.text import MIMEText
 from datetime import datetime
 from django.http import JsonResponse
 from django.views.generic import View
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 
-from utils import functions
+from utils.helpers import email_does_not_exist
 from messenger.settings import *
 from account.models import UserProfile
 from .models import Message, ChatRoom
-from utils.responses import NOT_FOUND
+from utils.responses import NOT_FOUND, BAD_REQUEST
 from utils.view_modifiers import auth_required
 from .serializers import MessageSerializer, UserSerializer
 
@@ -22,8 +22,8 @@ def index(request):
 @auth_required
 def chat(request):
 	user = request.user
-	all_users = UserProfile.objects.all()
-	all_chat_rooms = ChatRoom.objects.all()
+	all_users = UserProfile.get_all()
+	all_chat_rooms = ChatRoom.get_all()
 	return render(request, "chat/chat.html", {
 		'user': user,
 		'all_users': all_users,
@@ -35,34 +35,38 @@ class SearchPeople(View):
 
 	@auth_required
 	def get(self, request):
-		data = UserProfile.objects.all()
+		data = UserProfile.get_all()
 		return render(request, "chat/search.html", {'all_users': data})
 
 	@auth_required
 	def post(self, request):
-		keyword = request.POST['search']
+		keyword = request.POST.get('search')
 		if 'city' in request.POST:
 			f_n, l_n = keyword.split()
-			birthday = request.POST['birthday']
-			data = UserProfile.objects.filter(
-				first_name=f_n,
-				last_name=l_n,
-				user_city=request.POST['city'],
-				user_country=request.POST['country'],
-				user_birthday_day=birthday[8:],
-				user_birthday_month=birthday[5:7],
-				user_birthday_year=birthday[:4],
-				user_gender=request.POST['gender']
-			)
+			filter_data = {
+				'first_name': f_n,
+				'last_name': l_n,
+				'city': request.POST.get('city'),
+				'country': request.POST.get('country'),
+				'birthday': request.POST.get('birthday'),
+				'gender': request.POST.get('gender')
+			}
+			data = UserProfile.filter_by(**filter_data)
 		elif " " in keyword:
 			f_n, l_n = keyword.split()
-			data = UserProfile.objects.filter(
-				first_name__icontains=f_n,
-				last_name__icontains=l_n
-			)
+			filter_data = {
+				'first_name__icontains': f_n,
+				'last_name__icontains': l_n
+			}
+			data = UserProfile.filter_by(**filter_data)
 		else:
-			data = UserProfile.objects.filter(first_name__icontains=keyword) | UserProfile.objects.filter(
-				last_name__icontains=keyword)
+			first_name_data = {
+				'first_name__icontains': keyword
+			}
+			last_name_data = {
+				'last_name__icontains': keyword
+			}
+			data = UserProfile.filter_by(**first_name_data) | UserProfile.filter_by(**last_name_data)
 		serializer = UserSerializer(data, many=True)
 		return JsonResponse(serializer.data, safe=False)
 
@@ -70,111 +74,125 @@ class SearchPeople(View):
 class ChatManager(View):
 
 	@auth_required
-	def delete(self, request):
-		friend_id = request.POST['delete_chat_room']
-		try:
-			ChatRoom.objects.get(author__id=request.user.id, friend__id=friend_id).delete()
-		except ChatRoom.DoesNotExist:
-			return NOT_FOUND()
-		return JsonResponse({'success': 'Chat room has been deleted.'})
-
-	@auth_required
 	def get(self, request):
 		if 'msgs_amount' in request.GET and 'chat_room_data' in request.GET:
-			msgs_am = len(Message.objects.filter(
-				chat_room=ChatRoom.objects.get(
-					friend__id=request.GET['chat_room_data'],
-					author__id=request.user.id
-				))
-			)
-			response_data = {'amount': msgs_am}
-			return JsonResponse(response_data)
+			data = {
+				'author': UserProfile.get_by_id(request.user.id),
+				'friend': UserProfile.get_by_id(request.GET.get('chat_room_data'))
+			}
+			chat_room = ChatRoom.filter_by(**data)
+			if chat_room:
+				data = {
+					'chat_room': chat_room.first()
+				}
+				messages = Message.filter_by(**data)
+				msgs_amount = len(messages)
+				response_data = {
+					'amount': msgs_amount
+				}
+				return JsonResponse(response_data)
 		if 'chat_room_data' in request.GET:
-			chat_room_msgs = Message.objects.filter(
-				chat_room=ChatRoom.objects.get(
-					friend__id=request.GET['chat_room_data'],
-					author__id=request.user.id
-				)
-			)
-			serializer = MessageSerializer(chat_room_msgs, many=True)
+			filter_data = {
+				'author': UserProfile.get_by_id(request.user.id),
+				'friend': UserProfile.get_by_id(request.GET.get('chat_room_data'))
+			}
+			chat_room = ChatRoom.filter_by(**filter_data)
+			if not chat_room:
+				return NOT_FOUND()
+			filter_data = {
+				'chat_room': chat_room.first()
+			}
+			messages = Message.filter_by(**filter_data)
+			serializer = MessageSerializer(messages, many=True)
 			return JsonResponse(serializer.data, safe=False)
+		return BAD_REQUEST()
 
 	@auth_required
 	def post(self, request):
-		msg = request.POST['msg']
+		msg = request.POST.get('msg')
 		if msg != '':
 			msg_time = str(datetime.now())[11:16] + "&nbsp;&nbsp;|&nbsp;&nbsp;" + str(datetime.now().strftime("%d %b %Y"))[:11]
-			author = get_object_or_404(UserProfile, id=request.user.id)
-			friend = get_object_or_404(UserProfile, id=request.POST['friend_id'])
-			author_f_name_l_name = author.first_name[0] + author.last_name[0]
-			try:
-				chat_room = ChatRoom.objects.get(author__id=author.id, friend__id=friend.id)
-			except ChatRoom.DoesNotExist:
+			author = UserProfile.get_by_id(request.user.id)
+			friend = UserProfile.get_by_id(request.POST.get('friend_id'))
+			if not author and not friend:
+				return NOT_FOUND()
+			filter_data = {
+				'author': author,
+				'friend': friend
+			}
+			chat_room = ChatRoom.filter_by(**filter_data)
+			if not chat_room:
 				room_data = {
 					'author': author,
 					'friend': friend,
-					'author_id': author.id,
-					'friend_id': friend.id,
 					'logo': friend.user_logo
 				}
-				chat_room = functions.create_chat_room(room_data)
+				ChatRoom.add(**room_data)
 			message_data = {
 				'chat_room': chat_room,
-				'message': msg,
-				'message_time': msg_time,
-				'author_username': author.username,
-				'author_initials': author_f_name_l_name,
-				'author_logo': author.user_logo,
-				'author_id': author.id
+				'author': author,
+				'msg': msg,
+				'time': msg_time,
 			}
-			functions.create_message(message_data)
-			if author.id != friend.id:
-				try:
-					chat_room = ChatRoom.objects.get(author__id=friend.id, friend__id=author.id)
-				except ChatRoom.DoesNotExist:
+			Message.add(**message_data)
+			if author != friend:
+				filter_data = {
+					'author': friend,
+					'friend': author
+				}
+				chat_room = ChatRoom.filter_by(**filter_data)
+				if not chat_room:
 					room_data = {
 						'author': friend,
 						'friend': author,
-						'author_id': friend.id,
-						'friend_id': author.id,
 						'logo': author.user_logo
 					}
-					chat_room = functions.create_chat_room(room_data)
+					ChatRoom.add(**room_data)
 				message_data = {
 					'chat_room': chat_room,
-					'message': msg,
-					'message_time': msg_time,
-					'author_username': author.username,
-					'author_initials': author_f_name_l_name,
-					'author_logo': author.user_logo,
-					'author_id': author.id
+					'author': author,
+					'msg': msg,
+					'time': msg_time,
 				}
-				functions.create_message(message_data)
+				Message.add(**message_data)
 			return JsonResponse({'status_message': 'Message has been sent!'})
 		return JsonResponse({'status_message': 'Message is empty!'})
+	
+	@auth_required
+	def delete(self, request):
+		data = {
+			'author': UserProfile.get_by_id(request.user.id),
+			'friend': UserProfile.get_by_id(request.POST.get('delete_chat_room'))
+		}
+		chat_room = ChatRoom.filter_by(**data)
+		if chat_room:
+			chat_room.first().delete()
+			return JsonResponse({'success': 'Chat room has been deleted.'})
+		else:
+			return NOT_FOUND()
 
 
 def send_email(request):
 	if request.user.is_authenticated:
 		return redirect('index')
 	if 'generated_code' in request.GET and 'user_email' in request.GET:
-		usr_email = request.GET['user_email']
-		if not functions.check_email(usr_email, UserProfile.objects.all()):
+		usr_email = request.GET.get('user_email')
+		if not email_does_not_exist(usr_email, UserProfile.get_all()):
 			return JsonResponse({
 				'error_code': "222",
 				'name': "User with this email address already exists!"
 			})
-		g_c = request.GET['generated_code']
-		request.session['gen_code'] = g_c
+		generated_code = request.GET.get('generated_code')
+		request.session['gen_code'] = generated_code
 		message_content = """This is data for signing in Your account:
  Login:           {}\n Password:    {}\n
 Do not show this message to anyone to prevent stealing your account!
 The last step you should perform is to enter this code: "{}".\n
 Thank You for registering on our website.
 Best regards, messenger support.""".format(
-			request.GET['username'],
-			request.GET['password'],
-			g_c
+			request.GET.get('username'),
+			request.GET.get('password'),
+			generated_code
 		)
 		support_email = "mymessengerhelp@gmail.com"
 		message_subject = 'Messenger sign up'

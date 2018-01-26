@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, EmptyResultSet
 
 
 class UserProfile(User):
@@ -22,10 +22,15 @@ class UserProfile(User):
 			return None
 	
 	@staticmethod
-	def filter_by(pk=None, gender=None, birthday=None, country=None, city=None, education=None, **kwargs):
+	def filter_by(pk=None, first_name=None, last_name=None, gender=None, birthday=None, country=None, city=None,
+				education=None, **kwargs):
 		query = {}
 		if pk:
 			query['pk'] = pk
+		if first_name:
+			query['first_name'] = first_name
+		if last_name:
+			query['last_name'] = last_name
 		if gender:
 			query['gender'] = gender
 		if birthday:
@@ -40,7 +45,15 @@ class UserProfile(User):
 		try:
 			profiles = UserProfile.objects.filter(**query)
 			return profiles
-		except ObjectDoesNotExist:
+		except EmptyResultSet:
+			return None
+	
+	@staticmethod
+	def get_all():
+		try:
+			profiles = UserProfile.objects.all()
+			return profiles
+		except EmptyResultSet:
 			return None
 	
 	@staticmethod
@@ -115,7 +128,7 @@ class PhotoLogo(models.Model):
 		try:
 			photo = PhotoLogo.objects.all()
 			return photo
-		except ObjectDoesNotExist:
+		except EmptyResultSet:
 			return None
 		
 	@staticmethod
@@ -131,7 +144,7 @@ class PhotoLogo(models.Model):
 		try:
 			photos = PhotoLogo.objects.filter(**query)
 			return photos
-		except ObjectDoesNotExist:
+		except EmptyResultSet:
 			return None
 	
 	@staticmethod
