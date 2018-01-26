@@ -56,7 +56,7 @@ class Profile(View):
 					room_data = {
 						'author': author,
 						'friend': author,
-						'logo': author.user_logo
+						'logo': author.logo
 					}
 					chat_room = ChatRoom.add(**room_data)
 					if msg != "":
@@ -71,21 +71,21 @@ class Profile(View):
 				room_data = {
 					'author': author,
 					'friend': friend,
-					'logo': friend.user_logo
+					'logo': friend.logo
 				}
 				chat_room = ChatRoom.add(**room_data)
 				if msg != "":
 					message_data = {
 						'chat_room': chat_room,
 						'author': author,
-						'mag': msg,
+						'msg': msg,
 						'time': msg_time,
 					}
 					Message.add(**message_data)
 				room_data = {
 					'author': friend,
 					'friend': author,
-					'logo': author.user_logo
+					'logo': author.logo
 				}
 				ChatRoom.add(**room_data)
 				if msg != "":
@@ -100,7 +100,7 @@ class Profile(View):
 			if msg != "":
 				if author_chat_room:
 					message_data = {
-						'chat_room': author_chat_room,
+						'chat_room': author_chat_room.first(),
 						'author': author,
 						'msg': msg,
 						'time': msg_time,
@@ -110,7 +110,7 @@ class Profile(View):
 						room_data = {
 							'author': friend,
 							'friend': author,
-							'logo': author.user_logo
+							'logo': author.logo
 						}
 						chat_room = ChatRoom.add(**room_data)
 						message_data = {
@@ -121,9 +121,9 @@ class Profile(View):
 						}
 						Message.add(**message_data)
 				if friend_chat_room:
-					if author_chat_room != friend_chat_room:
+					if author_chat_room.first() != friend_chat_room.first():
 						message_data = {
-							'chat_room': friend_chat_room,
+							'chat_room': friend_chat_room.first(),
 							'author': author,
 							'msg': msg,
 							'time': msg_time,
@@ -133,7 +133,7 @@ class Profile(View):
 							room_data = {
 								'author': author,
 								'friend': friend,
-								'logo': friend.user_logo
+								'logo': friend.logo
 							}
 							chat_room = ChatRoom.add(**room_data)
 							message_data = {

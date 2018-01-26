@@ -127,9 +127,9 @@ class ChatManager(View):
 					'friend': friend,
 					'logo': friend.user_logo
 				}
-				ChatRoom.add(**room_data)
+				chat_room = ChatRoom.add(**room_data)
 			message_data = {
-				'chat_room': chat_room,
+				'chat_room': chat_room.first(),
 				'author': author,
 				'msg': msg,
 				'time': msg_time,
@@ -147,9 +147,9 @@ class ChatManager(View):
 						'friend': author,
 						'logo': author.user_logo
 					}
-					ChatRoom.add(**room_data)
+					chat_room = ChatRoom.add(**room_data)
 				message_data = {
-					'chat_room': chat_room,
+					'chat_room': chat_room.first(),
 					'author': author,
 					'msg': msg,
 					'time': msg_time,
