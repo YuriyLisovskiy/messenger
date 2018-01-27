@@ -15,7 +15,7 @@ $(document).ready(function () {
             console.log(chat_room_data);
             $.ajax({
                 method: 'delete',
-                url: '/chat_manager/',
+                url: '/api/chat/manager',
                 data: {
                     'delete_chat_room': chat_room_data
                 },
@@ -50,7 +50,7 @@ $(document).ready(function () {
     function check_for_new_msgs() {
         $.ajax({
             method: 'get',
-            url: '/chat_manager/',
+            url: '/api/chat/manager',
             data: {
                 'msgs_amount': msgs_amount,
                 'chat_room_data': chat_room_data
@@ -71,7 +71,7 @@ $(document).ready(function () {
     }
     function refresh_msg_box() {
         var scroll_chatlogs = $('.chatlogs');
-        $.getJSON('/chat_manager/', {'chat_room_data': chat_room_data}, function (response) {
+        $.getJSON('/api/chat/manager', {'chat_room_data': chat_room_data}, function (response) {
             msgs_amount = response.length;
             var html = "";
             for (var key in response) {
@@ -124,7 +124,7 @@ $(document).ready(function () {
             textarea.focus();
             $.ajax({
                 method: 'POST',
-                url: '/chat_manager/',
+                url: '/api/chat/manager',
                 data: {
                     'msg': message,
                     'friend_id': chat_room_data

@@ -21,7 +21,7 @@ $(document).ready(function () {
             get_csrf_token();
             $.ajax({
                 method: 'post',
-                url: '/chat/search/',
+                url: '/search/people',
                 data: {'search': search},
                 cache: false,
                 success: function (response) {

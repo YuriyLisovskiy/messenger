@@ -12,7 +12,7 @@ $(document).ready(function () {
             if (!$('#check-parameters').prop('checked')) {
                 $.ajax({
                     method: 'post',
-                    url: '/chat/search/',
+                    url: '/search/people',
                     data: {'search': search},
                     cache: false,
                     success: function (response) {
@@ -41,7 +41,7 @@ $(document).ready(function () {
                 if (city && country && birthday && gender) {
                     $.ajax({
                         method: 'post',
-                        url: '/chat/search/',
+                        url: '/search/people',
                         data: {
                             'search': search,
                             'city': city,

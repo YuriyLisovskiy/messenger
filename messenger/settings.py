@@ -24,6 +24,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'chat.apps.ChatConfig',
     'account.apps.AccountConfig',
+    'search.apps.SearchConfig',
+    'api.apps.ApiConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

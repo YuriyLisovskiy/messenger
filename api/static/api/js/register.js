@@ -17,7 +17,7 @@ $(document).ready(function () {
         get_csrf_token();
         $.ajax({
                 method: 'GET',
-                url: '/send_email/',
+                url: '/api/send/email',
                 dataType: 'json',
                 data: {
                     generated_code: code,
