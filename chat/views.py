@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
-from account.models import UserProfile
 from .models import ChatRoom
+from account.models import UserProfile
 from utils.view_modifiers import auth_required
 
 

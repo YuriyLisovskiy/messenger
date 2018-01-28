@@ -1,7 +1,7 @@
 from django.shortcuts import redirect
 
-from messenger.settings import LOGIN_REDIRECT_URL
 from .responses import PERMISSION_DENIED
+from messenger.settings import LOGIN_REDIRECT_URL
 
 
 def sudo_required(func):

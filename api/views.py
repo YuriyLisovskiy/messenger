@@ -3,18 +3,18 @@ from email.mime.text import MIMEText
 
 from datetime import datetime
 from django.http import JsonResponse
-from django.views.generic import View
 from django.shortcuts import redirect
+from django.views.generic import View
 
-from utils.helpers import email_does_not_exist
 from messenger.settings import *
-from utils.responses import NOT_FOUND, BAD_REQUEST
-from chat.models import Message, ChatRoom
-from utils.view_modifiers import auth_required
 from account.models import UserProfile
+from chat.models import Message, ChatRoom
+from utils.helpers import email_does_not_exist
+from utils.view_modifiers import auth_required
+from utils.responses import NOT_FOUND, BAD_REQUEST
 
 
-class ChatManager(View):
+class Chat(View):
 	
 	@auth_required
 	def get(self, request):

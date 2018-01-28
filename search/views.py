@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.generic import View
-from django.core.serializers import serialize
 
 from account.models import UserProfile
 from utils.view_modifiers import auth_required

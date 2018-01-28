@@ -1,15 +1,15 @@
 from datetime import datetime
 from django.shortcuts import render
-from django.views.generic import View
 from django.shortcuts import redirect
+from django.views.generic import View
 from django.contrib.auth import authenticate, login, logout
 
-from .models import UserProfile, PhotoLogo
-from chat.models import ChatRoom, Message
 from utils import header
-from utils.helpers import password_is_valid, username_is_valid, email_does_not_exist
-from utils.responses import NOT_FOUND, BAD_REQUEST
+from chat.models import ChatRoom, Message
+from .models import UserProfile, PhotoLogo
 from utils.view_modifiers import auth_required
+from utils.responses import NOT_FOUND, BAD_REQUEST
+from utils.helpers import password_is_valid, username_is_valid, email_does_not_exist
 
 
 class Profile(View):

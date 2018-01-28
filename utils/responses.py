@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse
 from django.shortcuts import render_to_response
 
 OK = HttpResponse('ok', status=200)
