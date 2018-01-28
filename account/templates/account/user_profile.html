@@ -16,7 +16,7 @@
 					{% if user_profile.logo %}
 						<img class="uploaded-photo" id="uploaded-photo-logo" src="{{ user_profile.logo.url }}">
 					{% else %}
-						<h3>No photo uploaded</h3>
+						<img class="uploaded-photo" id="uploaded-photo-logo" src="">
 					{% endif %}
 					<form method="post" enctype="multipart/form-data" id="change-photo-form">{% csrf_token %}
 						<label class="btn btn-default btn-file">
