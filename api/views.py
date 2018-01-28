@@ -9,7 +9,6 @@ from django.shortcuts import redirect
 from utils.helpers import email_does_not_exist
 from messenger.settings import *
 from utils.responses import NOT_FOUND, BAD_REQUEST
-from chat.serializers import MessageSerializer
 from chat.models import Message, ChatRoom
 from utils.view_modifiers import auth_required
 from account.models import UserProfile
@@ -47,8 +46,11 @@ class ChatManager(View):
 				'chat_room': chat_room.first()
 			}
 			messages = Message.filter_by(**filter_data)
-			serializer = MessageSerializer(messages, many=True)
-			return JsonResponse(serializer.data, safe=False)
+			response = {
+				'data': [message.to_dict() for message in messages],
+				'status': 'OK'
+			}
+			return JsonResponse(response, safe=False)
 		return BAD_REQUEST()
 	
 	@auth_required
@@ -112,7 +114,10 @@ class ChatManager(View):
 		chat_room = ChatRoom.filter_by(**data)
 		if chat_room:
 			chat_room.first().delete()
-			return JsonResponse({'success': 'Chat room has been deleted.'})
+			response = {
+				'success': 'Chat room has been deleted.'
+			}
+			return JsonResponse(response)
 		else:
 			return NOT_FOUND()
 

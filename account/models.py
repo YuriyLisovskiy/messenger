@@ -13,6 +13,23 @@ class UserProfile(User):
 	about = models.CharField(max_length=999999, blank=True)
 	education = models.CharField(max_length=100, blank=True)
 
+	def to_dict(self):
+		return {
+			'id': self.id,
+			'username': self.username,
+			'email': self.email,
+			'first_name': self.first_name,
+			'last_name': self.last_name,
+			'logo': self.logo.url,
+			'gender': self.gender,
+			'birthday': self.birthday,
+			'country': self.country,
+			'city': self.city,
+			'mobile_number': self.mobile_number,
+			'about': self.about,
+			'education': self.education
+		}
+
 	@staticmethod
 	def get_by_id(user_id):
 		try:

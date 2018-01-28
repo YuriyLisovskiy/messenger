@@ -72,43 +72,43 @@ $(document).ready(function () {
     function refresh_msg_box() {
         var scroll_chatlogs = $('.chatlogs');
         $.getJSON('/api/chat/manager', {'chat_room_data': chat_room_data}, function (response) {
-            msgs_amount = response.length;
+            msgs_amount = response.data.length;
             var html = "";
-            for (var key in response) {
-                html += js_object_to_html(key, response);
+            for (var i in response.data) {
+                html += js_object_to_html(i, response.data);
             }
             document.getElementById('messages').innerHTML = html;
             scroll_chatlogs.scrollTop(scroll_chatlogs.prop("scrollHeight"));
         })
     }
-    function js_object_to_html(key, response) {
+    function js_object_to_html(i, response) {
         var html;
         var current_user = global_var_current_user;
-        if (current_user === response[key].author) {
+        if (current_user === response[i].author) {
             html = '<div class="chat self">';
-            if (response[key].author_logo) {
-                html += '<a href="/messenger/user/id' + response[key].author_id + '/"><div class="user-photo" style="background-image: url(' + response[key].author_logo + ')"></div></a>';
+            if (response[i].author_logo) {
+                html += '<a href="/account/user/id=' + response[i].author_id + '/"><div class="user-photo" style="background-image: url(' + response[i].author_logo + ')"></div></a>';
             }
             else {
-                html += '<a href="/messenger/user/id' + response[key].author_id + '/"><div class="user-data"><p>' + response[key].author_fn_ln + '</p></div></a>';
+                html += '<a href="/account/user/id=' + response[i].author_id + '/"><div class="user-data"><p>' + response[i].author_fn_ln + '</p></div></a>';
             }
             html += '<div class="chat-message">';
-            html += '<p class="msg">' + response[key].msg + '</p>';
-            html += '<p class="msg-time">' + response[key].time + '</p>';
+            html += '<p class="msg">' + response[i].msg + '</p>';
+            html += '<p class="msg-time">' + response[i].time + '</p>';
             html += '</div>';
             html += '</div>';
         }
         else {
             html = '<div class="chat friend">';
-            if (response[key].author_logo) {
-                html += '<a href="/messenger/user/id' + response[key].author_id + '/"><div class="user-photo" style="background-image: url(' + response[key].author_logo + ')"></div></a>';
+            if (response[i].author_logo) {
+                html += '<a href="/account/user/id=' + response[i].author_id + '/"><div class="user-photo" style="background-image: url(' + response[i].author_logo + ')"></div></a>';
             }
             else {
-                html += '<a href="/messenger/user/id' + response[key].author_id + '/"><div class="user-data"><p>' + response[key].author_fn_ln + '</p></div></a>';
+                html += '<a href="/account/user/id=' + response[i].author_id + '/"><div class="user-data"><p>' + response[i].author_fn_ln + '</p></div></a>';
             }
             html += '<div  class="chat-message">';
-            html += '<p class="msg">' + response[key].msg + '</p>';
-            html += '<p class="msg-time">' + response[key].time + '</p>';
+            html += '<p class="msg">' + response[i].msg + '</p>';
+            html += '<p class="msg-time">' + response[i].time + '</p>';
             html += '</div>';
             html += '</div>';
         }

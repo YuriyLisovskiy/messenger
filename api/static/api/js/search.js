@@ -17,9 +17,10 @@ $(document).ready(function () {
                     cache: false,
                     success: function (response) {
                         console.log("Search request '" + search + "' was sent to server.");
+                        console.log(response);
                         var html = "";
-                        for (var key in response) {
-                            html += js_object_to_html(key, response);
+                        for (var i in response.data) {
+                            html += js_object_to_html(i, response.data);
                         }
                         if (html.length === 0) {
                             html = '<p class="not-found">No users found</p>';
@@ -53,8 +54,8 @@ $(document).ready(function () {
                         success: function (response) {
                             console.log("Search request '" + search + "' was sent to server.");
                             var html = "";
-                            for (var key in response) {
-                                html += js_object_to_html(key, response);
+                            for (var i in response.data) {
+                                html += js_object_to_html(i, response.data);
                             }
                             if (html.length === 0) {
                                 html = '<p class="not-found">No users found</p>';
@@ -80,9 +81,9 @@ $(document).ready(function () {
             return "";
         }
         var html = '<div class="user-found">';
-        html += "<a href={% url 'profile' " + response[key].id + "'>";
-        if (response[key].user_logo) {
-            html += '<div class="user-img" style="background-image: url(' + response[key].user_logo + ')"></div>';
+        html += "<a href={% url 'profile' " + response[key].id + " %}'>";
+        if (response[key].logo) {
+            html += '<div class="user-img" style="background-image: url(' + response[key].logo + ')"></div>';
         }
         else {
             html += '<div class="user-img user-img-none">';

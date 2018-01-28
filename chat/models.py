@@ -86,6 +86,18 @@ class Message(models.Model):
 	author_logo = models.FileField(default=1)
 	author_id = models.CharField(default="", max_length=100)
 
+	def to_dict(self):
+		return {
+			'id': self.id,
+			'chat_room': self.chat_room.id,
+			'msg': self.msg,
+			'author_username': self.author_username,
+			'time': self.time,
+			'author_fn_ln': self.author_fn_ln,
+			'author_logo': self.author_logo.url,
+			'author_id': self.author_id
+		}
+
 	@staticmethod
 	def get_by_id(pk):
 		try:

@@ -27,14 +27,14 @@ class SearchPeople(View):
 				'birthday': request.POST.get('birthday'),
 				'gender': request.POST.get('gender')
 			}
-			data = UserProfile.filter_by(**filter_data)
+			user_profiles = UserProfile.filter_by(**filter_data)
 		elif " " in keyword:
 			f_n, l_n = keyword.split()
 			filter_data = {
 				'first_name__icontains': f_n,
 				'last_name__icontains': l_n
 			}
-			data = UserProfile.filter_by(**filter_data)
+			user_profiles = UserProfile.filter_by(**filter_data)
 		else:
 			first_name_data = {
 				'first_name__icontains': keyword
@@ -42,5 +42,9 @@ class SearchPeople(View):
 			last_name_data = {
 				'last_name__icontains': keyword
 			}
-			data = UserProfile.filter_by(**first_name_data) | UserProfile.filter_by(**last_name_data)
-		return JsonResponse(serialize('json', data), safe=False)
+			user_profiles = UserProfile.filter_by(**first_name_data) | UserProfile.filter_by(**last_name_data)
+		response = {
+			'data': [user_profile.to_dict() for user_profile in user_profiles],
+			'status': 'CREATED'
+		}
+		return JsonResponse(response, safe=False)
