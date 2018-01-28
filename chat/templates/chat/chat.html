@@ -10,7 +10,7 @@
 			<div class="chat-rooms" id="chat-rooms">
 				{% for ch_room in all_chat_rooms %}
 					{% if ch_room.author.id == user.id %}
-						<button name="{{ ch_room.friend.id }}" class="user-icon" id="chat-room-{{ ch_room.friend.id }}" style="background-image: url({{ ch_room.logo.url }})" title="{{ ch_room.friend.first_name }} {{ ch_room.friend.last_name }}"></button>
+						<button name="{{ ch_room.friend.id }}" class="user-icon" id="chat-room-{{ ch_room.friend.id }}" style="background-image: url({% if ch_room.logo %}{{ ch_room.logo.url }}{% else %}'http://voice4thought.org/wp-content/uploads/2016/08/default1.jpg'{% endif %})" title="{{ ch_room.friend.first_name }} {{ ch_room.friend.last_name }}"></button>
 					{% endif %}
 					<div class="popup-chat-room" id="popup-chat-room">
 						<input type="button" id="delete-dialog" class="delete-dialog" value="Delete this dialog?">

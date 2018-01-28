@@ -84,7 +84,7 @@ $(document).ready(function () {
     function js_object_to_html(i, response) {
         var html;
         var current_user = global_var_current_user;
-        if (current_user === response[i].author) {
+        if (current_user === response[i].author_id) {
             html = '<div class="chat self">';
             if (response[i].author_logo) {
                 html += '<a href="/account/user/id=' + response[i].author_id + '/"><div class="user-photo" style="background-image: url(' + response[i].author_logo + ')"></div></a>';

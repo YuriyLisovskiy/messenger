@@ -27,8 +27,8 @@ $(document).ready(function () {
                 success: function (response) {
                     panel_search_result.show();
                     var html = "";
-                    for (var key in response) {
-                        html += js_object_to_html(key, response);
+                    for (var i in response.data) {
+                        html += js_object_to_html(i, response.data);
                     }
                     if (html.length === 0) {
                         html = '<p class="not-found">No users found</p>';
@@ -45,22 +45,22 @@ $(document).ready(function () {
             panel_search_result.hide();
         }
     }
-    function js_object_to_html(key, response) {
+    function js_object_to_html(i, response) {
         var user_id_current = user_id_global;
-        if (response[key].id === user_id_current) {
+        if (response[i].id === user_id_current) {
             return "";
         }
         var html = '<div class="panel-user-found">';
-        html += '<a href="/user/' + response[key].id + '">';
-        if (response[key].user_logo) {
-            html += '<div class="panel-user-img" style="background-image: url(' + response[key].user_logo + ')"></div>';
+        html += '<a href="/user/' + response[i].id + '">';
+        if (response[i].logo) {
+            html += '<div class="panel-user-img" style="background-image: url(' + response[i].logo + ')"></div>';
         }
         else {
             html += '<div class="panel-user-img user-img-none">';
             html += '<span class="glyphicon glyphicon-user"></span>';
             html += '</div>';
         }
-        html += '<p>'+ response[key].first_name + " " + response[key].last_name + '</p>';
+        html += '<p>'+ response[i].first_name + " " + response[i].last_name + '</p>';
         html += '</a>';
         html += '</div>';
         return html;

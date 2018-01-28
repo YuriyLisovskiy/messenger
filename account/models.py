@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist, EmptyResultSet
 
 
 class UserProfile(User):
-	logo = models.ImageField(default='logo_none.jpg')
+	logo = models.ImageField(blank=True)
 	gender = models.CharField(max_length=6, blank=True)
 	birthday = models.DateField(blank=True, null=True)
 	country = models.CharField(max_length=100, blank=True)

@@ -13,7 +13,11 @@
 			<div class="popup-inner">
 				<h3 class="title">Change main photo</h3>
 				<div class="change-photo-form">
-					<img class="uploaded-photo" id="uploaded-photo-logo" src="{{ user_profile.logo.url }}">
+					{% if user_profile.logo %}
+						<img class="uploaded-photo" id="uploaded-photo-logo" src="{{ user_profile.logo.url }}">
+					{% else %}
+						<h3>No photo uploaded</h3>
+					{% endif %}
 					<form method="post" enctype="multipart/form-data" id="change-photo-form">{% csrf_token %}
 						<label class="btn btn-default btn-file">
 							Upload photo <input type="file" style="display: none;" id="img-input-logo" name="logo">
@@ -27,16 +31,18 @@
 	{% endif %}
 	<div class="popup" data-popup="popup-all-logos">
 		<div class="popup-inner">
-			<div class="display-container">
-				{% for logo in user_logos %}
-					<img class="slide-item-logo slide-image" src="{{ logo.photo.url }}" title="{{ logo.upload_time }}">
-				{% endfor %}
-				<label class="btn btn-default slide-btn">
-					&#10094;<input class="slide" id="prev-logo" type="button">
-				</label>
-				<label class="btn btn-default slide-btn">
-					&#10095;<input class="slide" id="next-logo" type="button"></label>
-			</div>
+			{% if user_logos %}
+				<div class="display-container">
+					{% for logo in user_logos %}
+						<img class="slide-item-logo slide-image" src="{{ logo.photo.url }}" title="{{ logo.upload_time }}">
+					{% endfor %}
+					<label class="btn btn-default slide-btn">
+						&#10094;<input class="slide" id="prev-logo" type="button">
+					</label>
+					<label class="btn btn-default slide-btn">
+						&#10095;<input class="slide" id="next-logo" type="button"></label>
+				</div>
+			{% endif %}
 			<a class="popup-close" data-popup-close="popup-all-logos" href="#">✖</a>
 		</div>
 	</div>
@@ -58,7 +64,7 @@
 					{% endif %}
 				</div>
 			{% else %}
-				<div class="" style="background-image: url({% static 'chat/images/logo_none.png' %});">
+				<div class="photo-logo" style="background-image: url('http://voice4thought.org/wp-content/uploads/2016/08/default1.jpg');">
 					{% if user_profile.username == user.username %}
 						<button data-popup-open="popup-logo" class="add-photo logo">
 							<span class="glyphicon glyphicon-camera"></span>&nbsp;

@@ -7,7 +7,7 @@ from account.models import UserProfile
 class ChatRoom(models.Model):
 	author = models.ForeignKey(UserProfile, null=True, related_name='author')
 	friend = models.ForeignKey(UserProfile, null=True, related_name='friend')
-	logo = models.ImageField(default=1)
+	logo = models.ImageField(blank=True)
 	
 	@staticmethod
 	def filter_by(pk=None, author=None, friend=None, logo=None, **kwargs):
@@ -83,10 +83,21 @@ class Message(models.Model):
 	author_username = models.CharField(default="", max_length=100)
 	time = models.CharField(default="", max_length=100)
 	author_fn_ln = models.CharField(default="", max_length=100)
-	author_logo = models.FileField(default=1)
+	author_logo = models.FileField(blank=True)
 	author_id = models.CharField(default="", max_length=100)
 
 	def to_dict(self):
+		if self.author_logo:
+			return {
+				'id': self.id,
+				'chat_room': self.chat_room.id,
+				'msg': self.msg,
+				'author_username': self.author_username,
+				'time': self.time,
+				'author_fn_ln': self.author_fn_ln,
+				'author_logo': self.author_logo.url,
+				'author_id': self.author_id
+			}
 		return {
 			'id': self.id,
 			'chat_room': self.chat_room.id,
@@ -94,7 +105,6 @@ class Message(models.Model):
 			'author_username': self.author_username,
 			'time': self.time,
 			'author_fn_ln': self.author_fn_ln,
-			'author_logo': self.author_logo.url,
 			'author_id': self.author_id
 		}
 
