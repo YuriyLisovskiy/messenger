@@ -1,8 +1,7 @@
 $(document).ready(function () {
     var generated_code;
     $('#register').click(function register() {
-        var received_code = document.getElementById('received-code');
-        if (!received_code.value) {
+        if (!document.getElementById('received-code').value) {
             $('#received-code-content').show(400);
             document.getElementById('content-register').style.height = "850px";
             generated_code = Math.random().toString(36).slice(2);
