@@ -49,7 +49,9 @@ ROOT_URLCONF = 'messenger.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR + '/templates/'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -114,7 +116,7 @@ EMAIL_PORT = 587
 EMAIL_LOGIN = 'change_me_in_local_settings'
 EMAIL_PASSWORD = 'change_me_in_local_settings'
 
-LOGIN_REDIRECT_URL = '/login/'
+LOGIN_REDIRECT_URL = '/account/login/'
 
 try:
     from messenger.local_settings import *

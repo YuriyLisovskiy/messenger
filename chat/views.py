@@ -6,7 +6,7 @@ from utils.view_modifiers import auth_required
 
 
 def index(request):
-	return render(request, "chat/index.html")
+	return render(request, 'index.html')
 
 
 @auth_required
