@@ -14,13 +14,12 @@ class UserProfile(User):
 	education = models.CharField(max_length=100, blank=True)
 
 	def to_dict(self):
-		return {
+		context = {
 			'id': self.id,
 			'username': self.username,
 			'email': self.email,
 			'first_name': self.first_name,
 			'last_name': self.last_name,
-			'logo': self.logo.url,
 			'gender': self.gender,
 			'birthday': self.birthday,
 			'country': self.country,
@@ -29,6 +28,9 @@ class UserProfile(User):
 			'about': self.about,
 			'education': self.education
 		}
+		if self.logo:
+			context['logo'] = self.logo.url
+		return context
 
 	@staticmethod
 	def get_by_id(user_id):
