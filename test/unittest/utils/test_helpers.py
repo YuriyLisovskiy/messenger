@@ -5,6 +5,7 @@ from utils.helpers import password_is_valid, email_does_not_exist, username_is_v
 
 
 class TestHelpers(TestCase):
+	
 	def setUp(self):
 		data = {
 			'first_name': 'test_first_name_1',
@@ -28,6 +29,7 @@ class TestHelpers(TestCase):
 		self.assertEqual(password_is_valid('12345'), False)
 	
 	def test_email_exists(self):
+		self.assertEqual(email_does_not_exist('test_email@gmail.com', None), True)
 		self.assertEqual(email_does_not_exist('test_email@gmail.com', UserProfile.get_all()), False)
 		self.assertEqual(email_does_not_exist('some_other_email@gmail.com', UserProfile.get_all()), True)
 	
