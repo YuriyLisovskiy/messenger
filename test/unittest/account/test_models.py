@@ -270,10 +270,55 @@ class TestPhotoLogo(TestCase):
 		self.assertEqual(photo.upload_time, 'another_time')
 	
 	def test_edit(self):
-		pass
+		photo = PhotoLogo.get_by_id(100500)
+		self.assertEqual(photo, None)
+		photo = PhotoLogo.get_by_id(self.id)
+		self.assertEqual(photo.owner, self.user)
+		self.assertEqual(photo.photo, self.IMAGE_FILE('temp.png'))
+		self.assertEqual(photo.upload_time, 'time')
+		data = {
+			'first_name': 'some_first_name',
+			'last_name': 'some_last_name',
+			'username': 'some_username',
+			'email': 'some.email@gmail.com',
+			'password': 'super_safe_password',
+		}
+		user = UserProfile.add(**data)
+		data = {
+			'owner': user,
+			'photo': self.IMAGE_FILE(),
+			'upload_time': 'some_time'
+		}
+		photo = PhotoLogo.edit(pk=100500, **data)
+		self.assertEqual(photo, None)
+		PhotoLogo.edit(pk=self.id, **data)
+		photo = PhotoLogo.get_by_id(self.id)
+		self.assertEqual(photo.owner, user)
+		self.assertEqual(photo.photo, self.IMAGE_FILE())
+		self.assertEqual(photo.upload_time, 'some_time')
 	
 	def test_filter_by(self):
-		pass
+		data = {
+			'owner': self.user,
+			'photo': self.IMAGE_FILE(),
+			'upload_time': 'time_1'
+		}
+		PhotoLogo.add(**data)
+		filter_data = {
+			'owner': self.user
+		}
+		photos = PhotoLogo.filter_by(**filter_data)
+		self.assertEqual(len(photos), 2)
+		filter_data = {
+			'photo': self.IMAGE_FILE()
+		}
+		photos = PhotoLogo.filter_by(**filter_data)
+		self.assertEqual(len(photos), 1)
+		filter_data = {
+			'upload_time': 'time_1'
+		}
+		photos = PhotoLogo.filter_by(**filter_data)
+		self.assertEqual(len(photos), 1)
 	
 	def test_get_by_id(self):
 		self.assertEqual(PhotoLogo.get_by_id(100500), None)
