@@ -41,11 +41,9 @@ class UserProfile(User):
 			return None
 	
 	@staticmethod
-	def filter_by(pk=None, first_name=None, last_name=None, gender=None, birthday=None, country=None, city=None,
+	def filter_by(first_name=None, last_name=None, gender=None, birthday=None, country=None, city=None,
 				education=None, **kwargs):
 		query = {}
-		if pk:
-			query['pk'] = pk
 		if first_name:
 			query['first_name'] = first_name
 		if last_name:
@@ -61,19 +59,11 @@ class UserProfile(User):
 		if education:
 			query['education'] = education
 		query.update(**kwargs)
-		try:
-			profiles = UserProfile.objects.filter(**query)
-			return profiles
-		except EmptyResultSet:
-			return None
-	
+		return UserProfile.objects.filter(**query)
+		
 	@staticmethod
 	def get_all():
-		try:
-			profiles = UserProfile.objects.all()
-			return profiles
-		except EmptyResultSet:
-			return None
+		return UserProfile.objects.all()
 	
 	@staticmethod
 	def add(first_name, last_name, username, password, email, city=None, country=None, birthday=None, gender=None,
