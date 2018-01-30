@@ -1,4 +1,5 @@
 import os
+import glob
 
 from django.test import TestCase
 from django.core.files.images import ImageFile
@@ -183,9 +184,7 @@ class TestUserProfile(TestCase):
 	
 	def test_to_dict(self):
 		user = UserProfile.get_by_id(self.id)
-		file = open('test.png', 'w+')
-		user.logo = ImageFile(file, 'test.png')
-		os.remove('test.png')
+		user.logo = self.IMAGE_FILE()
 		user_dict = user.to_dict()
 		self.assertEqual(user_dict['id'], self.id)
 		self.assertEqual(user_dict['first_name'], 'some_first_name')
@@ -218,15 +217,57 @@ class TestUserProfile(TestCase):
 		UserProfile.get_by_id(user_id).delete()
 		users = UserProfile.get_all()
 		self.assertEqual(len(users), 0)
+		
+	def tearDown(self):
+		try:
+			os.remove('media/test.png')
+		except OSError:
+			pass
+		try:
+			os.remove('media/temp.png')
+		except OSError:
+			pass
+		for file in glob.glob('media/test_*.png'):
+			os.remove(file)
+		for file in glob.glob('media/temp_*.png'):
+			os.remove(file)
+	
+	@staticmethod
+	def IMAGE_FILE(name='test.png'):
+		img = ImageFile(open(name, 'w+'), name)
+		os.remove(name)
+		return img
 
-'''
+
 class TestPhotoLogo(TestCase):
 	
 	def setUp(self):
-		pass
+		data = {
+			'first_name': 'another_first_name',
+			'last_name': 'another_last_name',
+			'username': 'another_username',
+			'email': 'another.email@gmail.com',
+			'password': 'super_safe_password',
+		}
+		self.user = UserProfile.add(**data)
+		data = {
+			'owner': self.user,
+			'photo': self.IMAGE_FILE('temp.png'),
+			'upload_time': 'time'
+		}
+		self.id = PhotoLogo.add(**data).id
 	
 	def test_add(self):
-		pass
+		data = {
+			'owner': self.user,
+			'photo': self.IMAGE_FILE(),
+			'upload_time': 'another_time'
+		}
+		photo_id = PhotoLogo.add(**data).id
+		photo = PhotoLogo.get_by_id(photo_id)
+		self.assertEqual(photo.owner, self.user)
+		self.assertEqual(photo.photo, self.IMAGE_FILE())
+		self.assertEqual(photo.upload_time, 'another_time')
 	
 	def test_edit(self):
 		pass
@@ -235,8 +276,45 @@ class TestPhotoLogo(TestCase):
 		pass
 	
 	def test_get_by_id(self):
-		pass
+		self.assertEqual(PhotoLogo.get_by_id(100500), None)
+		photo = PhotoLogo.get_by_id(self.id)
+		self.assertEqual(photo.id, self.id)
+		self.assertEqual(photo.owner, self.user)
+		self.assertEqual(photo.photo, self.IMAGE_FILE('temp.png'))
+		self.assertEqual(photo.upload_time, 'time')
 	
 	def test_get_all(self):
-		pass
-'''
+		photos = PhotoLogo.get_all()
+		self.assertEqual(len(photos), 1)
+		data = {
+			'owner': self.user,
+			'photo': self.IMAGE_FILE(),
+			'upload_time': 'time_1'
+		}
+		photo_id = PhotoLogo.add(**data).id
+		photos = PhotoLogo.get_all()
+		self.assertEqual(len(photos), 2)
+		PhotoLogo.get_by_id(self.id).delete()
+		PhotoLogo.get_by_id(photo_id).delete()
+		photos = PhotoLogo.get_all()
+		self.assertEqual(len(photos), 0)
+	
+	def tearDown(self):
+		try:
+			os.remove('media/test.png')
+		except OSError:
+			pass
+		try:
+			os.remove('media/temp.png')
+		except OSError:
+			pass
+		for file in glob.glob('media/test_*.png'):
+			os.remove(file)
+		for file in glob.glob('media/temp_*.png'):
+			os.remove(file)
+			
+	@staticmethod
+	def IMAGE_FILE(name='test.png'):
+		img = ImageFile(open(name, 'w+'), name)
+		os.remove(name)
+		return img
