@@ -1,5 +1,6 @@
 # Messenger
 [![Licence](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
+[![Language](https://img.shields.io/badge/python-3.5%2C%203.6-blue.svg)](https://github.com/YuriyLisovskiy/Messenger)
 [![Build Status](https://travis-ci.org/YuriyLisovskiy/Messenger.svg)](https://github.com/YuriyLisovskiy/Messenger)
 [![Coverage Status](https://coveralls.io/repos/github/YuriyLisovskiy/Messenger/badge.svg)](https://github.com/YuriyLisovskiy/Messenger)
 ### Download and prepare for using
