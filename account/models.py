@@ -137,12 +137,12 @@ class PhotoLogo(models.Model):
 		return PhotoLogo.objects.all()
 		
 	@staticmethod
-	def filter_by(owner=None, img=None, upload_time=None, **kwargs):
+	def filter_by(owner=None, photo=None, upload_time=None, **kwargs):
 		query = {}
 		if owner:
 			query['owner'] = owner
-		if img:
-			query['photo'] = img
+		if photo:
+			query['photo'] = photo
 		if upload_time:
 			query['upload_time'] = upload_time
 		query.update(**kwargs)
