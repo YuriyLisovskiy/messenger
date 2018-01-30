@@ -134,11 +134,7 @@ class PhotoLogo(models.Model):
 		
 	@staticmethod
 	def get_all():
-		try:
-			photo = PhotoLogo.objects.all()
-			return photo
-		except EmptyResultSet:
-			return None
+		return PhotoLogo.objects.all()
 		
 	@staticmethod
 	def filter_by(owner=None, img=None, upload_time=None, **kwargs):
@@ -150,11 +146,7 @@ class PhotoLogo(models.Model):
 		if upload_time:
 			query['upload_time'] = upload_time
 		query.update(**kwargs)
-		try:
-			photos = PhotoLogo.objects.filter(**query)
-			return photos
-		except EmptyResultSet:
-			return None
+		return PhotoLogo.objects.filter(**query)
 	
 	@staticmethod
 	def add(owner, photo, upload_time, **kwargs):
