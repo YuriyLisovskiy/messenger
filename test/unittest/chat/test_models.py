@@ -28,6 +28,13 @@ class TestChatRoom(TestCase):
 			'password': 'super_safe_password',
 		}
 		self.user2 = UserProfile.add(**data)
+		self.img = self.IMAGE_FILE('test.png')
+		data = {
+			'author': self.user2,
+			'friend': self.user1,
+			'logo': self.img
+		}
+		self.ch_room_id = ChatRoom.add(**data).id
 	
 	def test_add(self):
 		img = self.IMAGE_FILE('temp.png')
@@ -43,20 +50,57 @@ class TestChatRoom(TestCase):
 		self.assertEqual(chat_room.logo, img)
 	
 	def test_edit(self):
-		pass
+		chat_room = ChatRoom.get_by_id(self.ch_room_id)
+		self.assertEqual(chat_room.author, self.user2)
+		self.assertEqual(chat_room.friend, self.user1)
+		self.assertEqual(chat_room.logo, self.img)
+		img = self.IMAGE_FILE('temp.png')
+		data = {
+			'author': self.user1,
+			'friend': self.user2,
+			'logo': img
+		}
+		chat_room = ChatRoom.edit(100500, **data)
+		self.assertEqual(chat_room, None)
+		ChatRoom.edit(self.ch_room_id, **data)
+		chat_room = ChatRoom.get_by_id(self.ch_room_id)
+		self.assertNotEqual(chat_room.author, self.user2)
+		self.assertNotEqual(chat_room.friend, self.user1)
+		self.assertNotEqual(chat_room.logo, self.img)
+		self.assertEqual(chat_room.author, self.user1)
+		self.assertEqual(chat_room.friend, self.user2)
+		self.assertEqual(chat_room.logo, img)
 	
 	def test_get_by_id(self):
-		pass
-	
-	def test_filter_by(self):
-		pass
-	
+		chat_room = ChatRoom.get_by_id(100500)
+		self.assertEqual(chat_room, None)
+		chat_room = ChatRoom.get_by_id(self.ch_room_id)
+		self.assertEqual(chat_room.author, self.user2)
+		self.assertEqual(chat_room.friend, self.user1)
+		self.assertEqual(chat_room.logo, self.img)
+		
 	def test_get_all(self):
-		pass
-	
+		chat_rooms = ChatRoom.get_all()
+		self.assertEqual(len(chat_rooms), 1)
+		data = {
+			'author': self.user1,
+			'friend': self.user2,
+			'logo': self.IMAGE_FILE('temp.png')
+		}
+		ch_r_id = ChatRoom.add(**data).id
+		chat_rooms = ChatRoom.get_all()
+		self.assertEqual(len(chat_rooms), 2)
+		ChatRoom.remove(ch_r_id)
+		ChatRoom.remove(self.ch_room_id)
+		chat_rooms = ChatRoom.get_all()
+		self.assertEqual(len(chat_rooms), 0)
+		
 	def test_remove(self):
-		pass
-	
+		ChatRoom.remove(100500)
+		ChatRoom.remove(self.ch_room_id)
+		chat_room = ChatRoom.get_by_id(self.ch_room_id)
+		self.assertEqual(chat_room, None)
+		
 	def tearDown(self):
 		try:
 			os.remove('media/test.png')
