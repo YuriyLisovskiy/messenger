@@ -10,10 +10,8 @@ class ChatRoom(models.Model):
 	logo = models.ImageField(blank=True)
 	
 	@staticmethod
-	def filter_by(pk=None, author=None, friend=None, logo=None, **kwargs):
+	def filter_by(author=None, friend=None, logo=None, **kwargs):
 		query = {}
-		if pk:
-			query['pk'] = pk
 		if author:
 			query['author'] = author
 		if friend:
@@ -117,11 +115,9 @@ class Message(models.Model):
 			return None
 	
 	@staticmethod
-	def filter_by(pk=None, chat_room=None, msg=None, author=None, time=None, author_fn_ln=None, author_logo=None,
+	def filter_by(chat_room=None, msg=None, author=None, time=None, author_fn_ln=None, author_logo=None,
 				author_id=None, **kwargs):
 		query = {}
-		if pk:
-			query['pk'] = pk
 		if chat_room:
 			query['chat_room'] = chat_room
 		if msg:
