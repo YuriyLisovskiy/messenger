@@ -100,11 +100,7 @@ class Message(models.Model):
 	
 	@staticmethod
 	def get_all():
-		try:
-			messages = Message.objects.all()
-			return messages
-		except EmptyResultSet:
-			return None
+		return Message.objects.all()
 	
 	@staticmethod
 	def filter_by(chat_room=None, msg=None, author=None, time=None, author_fn_ln=None, author_logo=None,
@@ -125,12 +121,8 @@ class Message(models.Model):
 		if author_id:
 			query['author_id'] = author_id
 		query.update(**kwargs)
-		try:
-			messages = Message.objects.filter(**query)
-			return messages
-		except EmptyResultSet:
-			return None
-	
+		return Message.objects.filter(**query)
+		
 	@staticmethod
 	def add(chat_room, msg, author, time, **kwargs):
 		message = Message()
