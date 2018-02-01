@@ -19,11 +19,7 @@ class ChatRoom(models.Model):
 		if logo:
 			query['logo'] = logo
 		query.update(**kwargs)
-		try:
-			chat_rooms = ChatRoom.objects.filter(**query)
-			return chat_rooms
-		except EmptyResultSet:
-			return None
+		return ChatRoom.objects.filter(**query)
 	
 	@staticmethod
 	def get_by_id(pk):
@@ -35,11 +31,7 @@ class ChatRoom(models.Model):
 	
 	@staticmethod
 	def get_all():
-		try:
-			chat_rooms = ChatRoom.objects.all()
-			return chat_rooms
-		except EmptyResultSet:
-			return None
+		return ChatRoom.objects.all()
 	
 	@staticmethod
 	def add(author, friend, logo, **kwargs):
