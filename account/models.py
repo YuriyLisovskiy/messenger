@@ -67,7 +67,7 @@ class UserProfile(User):
 	
 	@staticmethod
 	def add(first_name, last_name, username, password, email, city=None, country=None, birthday=None, gender=None,
-			education=None,	mobile=None, about=None, **kwargs):
+			education=None,	mobile=None, about=None):
 		user_profile = UserProfile()
 		user_profile.first_name = first_name
 		user_profile.last_name = last_name
@@ -149,7 +149,7 @@ class PhotoLogo(models.Model):
 		return PhotoLogo.objects.filter(**query)
 	
 	@staticmethod
-	def add(owner, photo, upload_time, **kwargs):
+	def add(owner, photo, upload_time):
 		new_photo = PhotoLogo()
 		new_photo.owner = owner
 		new_photo.photo = photo
@@ -158,7 +158,7 @@ class PhotoLogo(models.Model):
 		return new_photo
 	
 	@staticmethod
-	def edit(pk, owner=None, photo=None, upload_time=None, **kwargs):
+	def edit(pk, owner=None, photo=None, upload_time=None):
 		photo_to_edit = PhotoLogo.get_by_id(pk)
 		if not photo_to_edit:
 			return None

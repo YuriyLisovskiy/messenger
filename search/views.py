@@ -7,11 +7,15 @@ from utils.view_modifiers import auth_required
 
 
 class SearchPeople(View):
+	
+	template_name = 'search/search.html'
 
 	@auth_required
 	def get(self, request):
-		data = UserProfile.get_all()
-		return render(request, "search/search.html", {'all_users': data})
+		context = {
+			'all_users': UserProfile.get_all()
+		}
+		return render(request, self.template_name, context=context)
 
 	@auth_required
 	def post(self, request):
@@ -42,7 +46,6 @@ class SearchPeople(View):
 				'last_name__icontains': keyword
 			}
 			user_profiles = UserProfile.filter_by(**first_name_data) | UserProfile.filter_by(**last_name_data)
-		print(user_profiles)
 		response = {
 			'data': [user_profile.to_dict() for user_profile in user_profiles],
 			'status': 'CREATED'

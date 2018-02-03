@@ -32,8 +32,8 @@ class Profile(View):
 	@auth_required
 	def post(self, request, profile_id):
 		if 'message' in request.POST:
-			author_id, friend_id = request.POST['data'].split()
-			msg = request.POST['message']
+			author_id, friend_id = request.POST.get('data').split()
+			msg = request.POST.get('message')
 			author = UserProfile.filter_by(pk=author_id)
 			friend = UserProfile.filter_by(id=friend_id)
 			if not author or not friend:
@@ -274,18 +274,16 @@ class RegistrationView(View):
 		return BAD_REQUEST()
 
 
-def logout_user(request):
-	logout(request)
-	return redirect('login')
-
-
-def login_user(request):
-	login_form = 'account/login_form.html'
-	if request.method == 'GET':
+class LoginView(View):
+	
+	template_name = 'account/login_form.html'
+	
+	def get(self, request):
 		if request.user.is_authenticated:
 			return redirect('/account/user/id=' + str(request.user.id))
-		return render(request, login_form)
-	if request.method == 'POST':
+		return render(request, self.template_name)
+	
+	def post(self, request):
 		username = request.POST.get('username')
 		password = request.POST.get('password')
 		if username and password:
@@ -302,5 +300,10 @@ def login_user(request):
 				context = {
 					'error_message': 'Invalid login or password'
 				}
-			return render(request, login_form, context)
-	return BAD_REQUEST()
+			return render(request, self.template_name, context)
+		return BAD_REQUEST()
+
+
+def logout_user(request):
+	logout(request)
+	return redirect('login')
