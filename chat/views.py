@@ -14,7 +14,7 @@ def chat(request):
 	user = request.user
 	all_users = UserProfile.get_all()
 	all_chat_rooms = ChatRoom.get_all()
-	return render(request, "chat/chat.html", {
+	return render(request, 'chat/chat.html', {
 		'user': user,
 		'all_users': all_users,
 		'all_chat_rooms': all_chat_rooms
