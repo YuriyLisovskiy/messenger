@@ -67,7 +67,7 @@ class UserProfile(User):
 	
 	@staticmethod
 	def add(first_name, last_name, username, password, email, city=None, country=None, birthday=None, gender=None,
-			education=None,	mobile=None, about=None):
+			education=None,	mobile=None, about=None, logo=None):
 		user_profile = UserProfile()
 		user_profile.first_name = first_name
 		user_profile.last_name = last_name
@@ -88,6 +88,8 @@ class UserProfile(User):
 			user_profile.about = about
 		if birthday:
 			user_profile.birthday = birthday
+		if logo:
+			user_profile.logo = logo
 		user_profile.save()
 		return user_profile
 

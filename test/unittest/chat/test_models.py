@@ -140,7 +140,7 @@ class TestMessage(TestCase):
 			'username': 'another_username',
 			'email': 'another.email@gmail.com',
 			'password': 'super_safe_password',
-			'photo': self.IMAGE_FILE('temp.png')
+			'logo': self.IMAGE_FILE('temp.png')
 		}
 		self.user2 = UserProfile.add(**data)
 		self.user2.logo = self.IMAGE_FILE('test.png')
