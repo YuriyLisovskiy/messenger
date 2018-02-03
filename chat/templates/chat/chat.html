@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Chat{% endblock %}
-{% block head %}{{ block.super }}{% endblock %}
+{% block head %}
+	{{ block.super }}
+	<link rel="stylesheet" type="text/css" href="{% static 'chat/css/chat.css' %}">
+{% endblock %}
 {% block chat_active %}active{% endblock %}
 {% block body %}
-	<link rel="stylesheet" type="text/css" href="{% static 'chat/css/chat.css' %}">
 	<div class="chatbox">
 		{% if all_chat_rooms %}
 			<div class="chat-rooms" id="chat-rooms">

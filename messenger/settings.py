@@ -21,7 +21,6 @@ AUTH_PROFILE_MODULE = 'chat.UserProfile'
 # Application definition
 
 INSTALLED_APPS = [
-	'rest_framework',
 	'chat.apps.ChatConfig',
 	'account.apps.AccountConfig',
 	'search.apps.SearchConfig',
@@ -105,8 +104,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+	os.path.join(BASE_DIR, 'static')
+]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
