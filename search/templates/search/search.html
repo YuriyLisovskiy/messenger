@@ -3,7 +3,7 @@
 {% block title %}Find people{% endblock %}
 {% block head %}
 	{{ block.super }}
-	<link rel="stylesheet" href="{% static 'search/css/search.css' %}">
+	<link rel="stylesheet" href="{% static 'css/search.css' %}">
 {% endblock %}
 {% block people_active %}active{% endblock %}
 {% block body %}
@@ -56,5 +56,5 @@
 	<script type="text/javascript">
 		var user_id_global = {{ user.id }};
 	</script>
-	<script type="text/javascript" src="{% static 'api/js/search.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/search.js' %}"></script>
 {% endblock %}

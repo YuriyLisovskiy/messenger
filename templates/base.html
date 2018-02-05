@@ -7,7 +7,7 @@
     <title>{% block title %}Base{% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="{% static 'messenger/css/base.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Satisfy" />
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.js"></script>
@@ -119,9 +119,9 @@
             var user_id_global = {{ user.id }};
         </script>
     {% endif %}
-    <script type="text/javascript" src="{% static 'messenger/js/particles.js' %}"></script>
-    <script type="text/javascript" src="{% static 'messenger/js/particles_config.js' %}"></script>
-    <script type="text/javascript" src="{% static 'api/js/base.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/particles.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/particles_config.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/base.js' %}"></script>
 	{% block footer %}{% endblock %}
 </body>
 </html>

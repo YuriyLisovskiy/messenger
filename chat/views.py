@@ -8,7 +8,7 @@ from utils.view_modifiers import auth_required
 
 class IndexView(View):
 
-	template_name = 'index.html'
+	template_name = 'home.html'
 	
 	def get(self, request):
 		return render(request, self.template_name)

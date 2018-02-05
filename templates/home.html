@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Messenger{% endblock %}
+{% block head %}
+	{{ block.super }}
+	<link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap_social.css' %}">
+	<link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css">
+{% endblock %}
+{% block body %}
+	<div id="fb-root"></div>
+	{% if response_msg %}
+		<div class="alert alert-success alert-dismissable">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">
+				<span class="glyphicon glyphicon-remove"></span>
+			</a>
+			<strong>SUCCESS: </strong>{{ response_msg }}
+		</div>
+	{% endif %}
+	<div class="content">
+		<div class="left">
+			<div class="site-description">
+				<h3>Site Description</h3>
+			</div>
+		</div>
+		<div class="right">
+			<div class="contacts">
+				<h3>Contacts</h3>
+				<table>
+					<tr>
+						<th>Support:</th>
+						<th>
+							<a target="_blank" href="https://mail.google.com/mail/?view=cm&fs=1&to=mymessengerhelp@gmail.com">Messenger
+							</a>
+						</th>
+					</tr>
+					<tr>
+						<th>Administrator:</th>
+						<th>
+							<a target="_blank" href="https://mail.google.com/mail/?view=cm&fs=1&to=yuralisovskiy98@gmail.com">
+								Yuriy Lisovskiy
+							</a>
+						</th>
+					</tr>
+				</table>
+				<h3>Share</h3>
+				<div class="other-login-methods">
+					<button id="google-login" title="Share on Google+" class="btn login-social btn-social-icon btn-google">
+						<span class="fa fa-google-plus"></span>
+					</button>
+					<div title="Share on Facebook" data-href="http://127.0.0.1:8000/" data-layout="button_count" data-size="large" data-mobile-iframe="true">
+						<a class="btn login-social btn-social-icon btn-facebook" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2F127.0.0.1%3A8000%2F&amp;src=sdkpreparse">
+							<span class="fa fa-facebook"></span>
+						</a>
+					</div>
+					<button id="twitter-login" title="Share on Twitter" class="btn login-social btn-social-icon btn-twitter">
+						<span class="fa fa-twitter"></span>
+					</button>
+					<button id="vk-login" title="Share on Vkontakte" class="btn login-social btn-social-icon btn-vk">
+						<span class="fa fa-vk"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block footer %}
+	<script type="text/javascript" src="{% static 'js/index.js' %}"></script>
+{% endblock %}

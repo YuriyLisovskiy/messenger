@@ -269,7 +269,7 @@ class RegistrationView(View):
 				if user is not None:
 					if user.is_active:
 						login(request, user)
-						return render(request, "index.html", {'response_msg': 'Thank you for joining us :)'})
+						return render(request, "../templates/home.html", {'response_msg': 'Thank you for joining us :)'})
 			return render(request, self.template_name)
 		return BAD_REQUEST()
 
