@@ -126,6 +126,13 @@ class PhotoLogo(models.Model):
 	photo = models.ImageField()
 	upload_time = models.CharField(default="", max_length=100)
 	
+	def to_dict(self):
+		return {
+			'owner': self.owner.id,
+			'photo': self.photo.url,
+			'upload_time': self.upload_time
+		}
+	
 	@staticmethod
 	def get_by_id(pk):
 		try:
