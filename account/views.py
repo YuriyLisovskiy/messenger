@@ -66,6 +66,10 @@ class Profile(View):
 
 
 class EditUserProfile(View):
+
+
+	def get(self, request):
+		return BAD_REQUEST
 	
 #	@auth_required
 	def post(self, request, profile_id):
@@ -99,6 +103,9 @@ class EditUserProfile(View):
 		
 		
 class RegistrationView(View):
+	
+	def get(self, request):
+		return BAD_REQUEST
 	
 	def post(self, request):
 		form = request.POST
@@ -144,7 +151,15 @@ class RegistrationView(View):
 
 class LoginView(View):
 
+	def get(self, request):
+		return BAD_REQUEST
+
 	def post(self, request):
+		if request.user.is_authenticated:
+			return JsonResponse({
+				'authenticated': True,
+				'status': "SUCCESS"
+			})
 		username = request.POST.get('username')
 		password = request.POST.get('password')
 		if username and password:
