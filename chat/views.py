@@ -18,23 +18,39 @@ class IndexView(View):
 		return render(request, self.template_name)
 
 
-class ChatView(View):
+class ChatListView(View):
 	
-	template_name = 'chat/chat.html'
-	
-	@auth_required
+#	@auth_required
 	def get(self, request):
-		context = {
-			'user': request.user,
-			'all_users': UserProfile.get_all(),
-			'all_chat_rooms': ChatRoom.get_all()
+		response = {
+			'data': {
+				'user_id': request.user.id,
+				'user_list': [x.to_dict for x in UserProfile.get_all()],
+				'chat_room_list': [x.to_dict for x in ChatRoom.get_all()]
+			}
 		}
-		return render(request, template_name=self.template_name, context=context)
+		return JsonResponse(response, status=200, safe=False)
+
+#	@auth_required
+	def post(self, request):
+		data = {
+			'author': UserProfile.get_by_id(request.user.id),
+			'friend': UserProfile.get_by_id(request.POST.get('delete_chat_room'))
+		}
+		chat_room = ChatRoom.filter_by(**data)
+		if chat_room:
+			chat_room.first().delete()
+			response = {
+				'success': 'Chat room has been deleted.'
+			}
+			return JsonResponse(response, status=201, safe=False)
+		else:
+			return NOT_FOUND()
 
 
-class Chat(View):
+class ChatRoomView(View):
 	
-	@auth_required
+#	@auth_required
 	def get(self, request):
 		if 'msgs_amount' in request.GET and 'chat_room_data' in request.GET:
 			data = {
@@ -71,7 +87,7 @@ class Chat(View):
 			return JsonResponse(response, safe=False)
 		return BAD_REQUEST()
 	
-	@auth_required
+#	@auth_required
 	def post(self, request):
 		msg = request.POST.get('msg')
 		if msg != '':
@@ -122,19 +138,3 @@ class Chat(View):
 				Message.add(**message_data)
 			return JsonResponse({'status_message': 'Message has been sent!'})
 		return JsonResponse({'status_message': 'Message is empty!'})
-	
-	@auth_required
-	def delete(self, request):
-		data = {
-			'author': UserProfile.get_by_id(request.user.id),
-			'friend': UserProfile.get_by_id(request.POST.get('delete_chat_room'))
-		}
-		chat_room = ChatRoom.filter_by(**data)
-		if chat_room:
-			chat_room.first().delete()
-			response = {
-				'success': 'Chat room has been deleted.'
-			}
-			return JsonResponse(response)
-		else:
-			return NOT_FOUND()
