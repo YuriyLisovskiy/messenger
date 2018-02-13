@@ -7,7 +7,7 @@ from django.views.generic import View
 from account.models import UserProfile
 from chat.models import Message, ChatRoom
 from utils.view_modifiers import auth_required
-from utils.responses import NOT_FOUND, BAD_REQUEST
+from utils.responses import NOT_FOUND, BAD_REQUEST, OK
 
 
 class IndexView(View):
@@ -45,7 +45,7 @@ class ChatListView(View):
 			}
 			return JsonResponse(response, status=201, safe=False)
 		else:
-			return NOT_FOUND()
+			return NOT_FOUND
 
 
 class ChatRoomView(View):
@@ -63,11 +63,13 @@ class ChatRoomView(View):
 					'chat_room': chat_room.first()
 				}
 				messages = Message.filter_by(**data)
-				msgs_amount = len(messages)
-				response_data = {
-					'amount': msgs_amount
+				response = {
+					'data': {
+						'amount': len(messages)
+					},
+					'status': 'OK'
 				}
-				return JsonResponse(response_data)
+				return JsonResponse(response, status=200, safe=False)
 		if 'chat_room_data' in request.GET:
 			filter_data = {
 				'author': UserProfile.get_by_id(request.user.id),
@@ -75,7 +77,7 @@ class ChatRoomView(View):
 			}
 			chat_room = ChatRoom.filter_by(**filter_data)
 			if not chat_room:
-				return NOT_FOUND()
+				return NOT_FOUND
 			filter_data = {
 				'chat_room': chat_room.first()
 			}
@@ -84,8 +86,8 @@ class ChatRoomView(View):
 				'data': [message.to_dict() for message in messages],
 				'status': 'OK'
 			}
-			return JsonResponse(response, safe=False)
-		return BAD_REQUEST()
+			return JsonResponse(response, status=200, safe=False)
+		return BAD_REQUEST
 	
 #	@auth_required
 	def post(self, request):
@@ -96,7 +98,7 @@ class ChatRoomView(View):
 			author = UserProfile.get_by_id(request.user.id)
 			friend = UserProfile.get_by_id(request.POST.get('friend_id'))
 			if not author and not friend:
-				return NOT_FOUND()
+				return NOT_FOUND
 			filter_data = {
 				'author': author,
 				'friend': friend
@@ -136,5 +138,5 @@ class ChatRoomView(View):
 					'time': msg_time,
 				}
 				Message.add(**message_data)
-			return JsonResponse({'status_message': 'Message has been sent!'})
-		return JsonResponse({'status_message': 'Message is empty!'})
+			return OK
+		return BAD_REQUEST
