@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist, EmptyResultSet
+from django.core.exceptions import ObjectDoesNotExist
 
 from account.models import UserProfile
 
@@ -21,6 +21,15 @@ class ChatRoom(models.Model):
 		query.update(**kwargs)
 		return ChatRoom.objects.filter(**query)
 	
+	def to_dict(self):
+		context = {
+			'author_id': self.author.id,
+			'friend_id': self.friend.id
+		}
+		if self.logo:
+			context['logo'] = self.logo.url
+		return context
+	
 	@staticmethod
 	def get_by_id(pk):
 		try:
@@ -34,7 +43,7 @@ class ChatRoom(models.Model):
 		return ChatRoom.objects.all()
 	
 	@staticmethod
-	def add(author, friend, logo, **kwargs):
+	def add(author, friend, logo):
 		chat_room = ChatRoom.filter_by(author=author, friend=friend, logo=logo).first()
 		if not chat_room:
 			chat_room = ChatRoom()
@@ -45,7 +54,7 @@ class ChatRoom(models.Model):
 		return chat_room
 	
 	@staticmethod
-	def edit(pk, author=None, friend=None, logo=None, **kwargs):
+	def edit(pk, author=None, friend=None, logo=None):
 		chat_room = ChatRoom.get_by_id(pk)
 		if not chat_room:
 			return None
@@ -124,7 +133,7 @@ class Message(models.Model):
 		return Message.objects.filter(**query)
 		
 	@staticmethod
-	def add(chat_room, msg, author, time, **kwargs):
+	def add(chat_room, msg, author, time):
 		message = Message()
 		message.chat_room = chat_room
 		message.msg = msg
@@ -137,7 +146,7 @@ class Message(models.Model):
 		return message
 	
 	@staticmethod
-	def edit(pk, chat_room=None, msg=None, author=None, time=None, **kwargs):
+	def edit(pk, chat_room=None, msg=None, author=None, time=None):
 		message = Message.get_by_id(pk)
 		if not message:
 			return None
