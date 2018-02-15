@@ -7,24 +7,25 @@ from account.models import UserProfile
 class ChatRoom(models.Model):
 	author = models.ForeignKey(UserProfile, null=True, related_name='author')
 	friend = models.ForeignKey(UserProfile, null=True, related_name='friend')
+	last_message = models.CharField(default="", max_length=9999999)
 	logo = models.ImageField(blank=True)
+	has_unread = models.BooleanField(default=True)
 	
 	@staticmethod
-	def filter_by(author=None, friend=None, logo=None, **kwargs):
+	def filter_by(author=None, friend=None, **kwargs):
 		query = {}
 		if author:
 			query['author'] = author
 		if friend:
 			query['friend'] = friend
-		if logo:
-			query['logo'] = logo
 		query.update(**kwargs)
 		return ChatRoom.objects.filter(**query)
 	
 	def to_dict(self):
 		context = {
 			'author_id': self.author.id,
-			'friend_id': self.friend.id
+			'friend_id': self.friend.id,
+			'last_message': self.last_message
 		}
 		if self.logo:
 			context['logo'] = self.logo.url
@@ -43,14 +44,14 @@ class ChatRoom(models.Model):
 		return ChatRoom.objects.all()
 	
 	@staticmethod
-	def add(author, friend, logo):
-		chat_room = ChatRoom.filter_by(author=author, friend=friend, logo=logo).first()
-		if not chat_room:
-			chat_room = ChatRoom()
-			chat_room.author = author
-			chat_room.friend = friend
-			chat_room.logo = logo
-			chat_room.save()
+	def add(author, friend, logo, last_message=None):
+		chat_room = ChatRoom()
+		chat_room.author = author
+		chat_room.friend = friend
+		chat_room.logo = logo
+		if last_message:
+			chat_room.last_message = last_message
+		chat_room.save()
 		return chat_room
 	
 	@staticmethod
@@ -78,8 +79,7 @@ class ChatRoom(models.Model):
 
 class Message(models.Model):
 	chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, default=1)
-	msg = models.CharField(default="", max_length=99999)
-	author_username = models.CharField(default="", max_length=100)
+	msg = models.CharField(default="", max_length=9999999)
 	time = models.CharField(default="", max_length=100)
 	author_fn_ln = models.CharField(default="", max_length=100)
 	author_logo = models.FileField(blank=True)
@@ -90,7 +90,6 @@ class Message(models.Model):
 			'id': self.id,
 			'chat_room': self.chat_room.id,
 			'msg': self.msg,
-			'author_username': self.author_username,
 			'time': self.time,
 			'author_fn_ln': self.author_fn_ln,
 			'author_id': self.author_id

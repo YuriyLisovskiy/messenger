@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 
 from utils import header
 from chat.models import ChatRoom, Message
-from .models import UserProfile, PhotoLogo
+from .models import UserProfile, Photo
 from utils.view_modifiers import auth_required
 from utils.helpers import email_does_not_exist
 from utils.responses import NOT_FOUND, BAD_REQUEST, CREATED, OK
@@ -18,7 +18,7 @@ class Profile(View):
 		if user_profile:
 			if user_profile.country != '':
 				user_profile.country = header.CountryList().get_county(user_profile.country)
-			user_logos = PhotoLogo.filter_by(owner=user_profile)
+			user_logos = Photo.filter_by(author=user_profile)
 			response = {
 				'data': {
 					'profile': user_profile.to_dict(),
@@ -37,7 +37,7 @@ class Profile(View):
 				return NOT_FOUND
 			user_profile = user_profile.first()
 			request_logo = request.FILES['avatar']
-			user_profile.logo = request_logo
+			user_profile.avatar = request_logo
 			user_profile.save()
 			chat_rooms = ChatRoom.filter_by(friend=user_profile)
 			if chat_rooms:
@@ -50,10 +50,10 @@ class Profile(View):
 					message.author_logo = request_logo
 					message.save()
 			data = {
-				'owner': user_profile,
+				'author': user_profile,
 				'photo': request_logo
 			}
-			photo = PhotoLogo.add(**data)
+			photo = Photo.add(**data)
 			response = {
 				'data': {
 					'avatar': photo.to_dict()
@@ -67,31 +67,21 @@ class Profile(View):
 
 class EditUserProfile(View):
 
-
 	def get(self, request):
 		return BAD_REQUEST
 	
 #	@auth_required
 	def post(self, request, profile_id):
-		country = request.POST.get('country')
-		if country:
-			if country != '':
-				country = header.COUNTRY_LIST.get_iso_code(country)
 		data = {
 			'first_name': request.POST.get('first_name'),
 			'last_name': request.POST.get('last_name'),
-			'city': request.POST.get('city'),
-			'country': country,
-			'birthday': request.POST.get('birthday'),
-			'gender': request.POST.get('gender'),
-			'education': request.POST.get('education'),
 			'mobile': request.POST.get('mobile_number'),
-			'about': request.POST.get('about_me'),
+			'bio': request.POST.get('about_me'),
+			'username': request.POST.get('username'),
+			'avatar': request.POST.get('avatar')
 		}
 		profile = UserProfile.edit(profile_id, **data)
 		if profile:
-			if profile.country or profile.country != '':
-				profile.country = header.COUNTRY_LIST.get_county(profile.country)
 			response = {
 				'data': {
 					'profile': profile.to_dict()
