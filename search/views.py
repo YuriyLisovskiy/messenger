@@ -9,17 +9,14 @@ class SearchPeople(View):
 
 #	@auth_required
 	def get(self, request):
-		if 'search' in request.POST:
-			keyword = request.POST.get('search')
-			if 'city' in request.POST:
+		if 'search' in request.GET:
+			keyword = request.GET.get('search')
+			if 'city' in request.GET:
 				f_n, l_n = keyword.split()
 				filter_data = {
 					'first_name': f_n,
 					'last_name': l_n,
-					'city': request.POST.get('city'),
-					'country': request.POST.get('country'),
-					'birthday': request.POST.get('birthday'),
-					'gender': request.POST.get('gender')
+					'mobile_number': request.GET.get('mobile_number')
 				}
 				user_profiles = UserProfile.filter_by(**filter_data)
 			elif " " in keyword:
