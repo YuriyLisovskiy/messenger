@@ -84,6 +84,7 @@ class Message(models.Model):
 	author_fn_ln = models.CharField(default="", max_length=100)
 	author_logo = models.FileField(blank=True)
 	author_id = models.CharField(default="", max_length=100)
+	is_unread = models.BooleanField(default=True)
 
 	def to_dict(self):
 		context = {
