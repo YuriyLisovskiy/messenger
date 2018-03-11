@@ -59,7 +59,7 @@ class ChatRoomView(View):
 	def get(self, request):
 		offset = 0
 		if 'offset' in request.GET:
-			offset = request.GET.get('offset')
+			offset = int(request.GET.get('offset'))
 		if 'friend_id' not in request.GET:
 			data = {
 				'author': UserProfile.get_by_id(request.user.id),
@@ -78,12 +78,17 @@ class ChatRoomView(View):
 			messages = Message.filter_by(**filter_data)
 			if offset <= len(messages):
 				messages = messages[offset:]
+			else:
+				return BAD_REQUEST
 			response = {
-				'data': [message.to_dict() for message in messages],
+				'data': {
+					'messages': [message.to_dict() for message in messages]
+				},
 				'status': 'OK'
 			}
 			return JsonResponse(response, status=200, safe=False)
-		return BAD_REQUEST
+		else:
+			return NOT_FOUND
 	
 #	@auth_required
 	def post(self, request):
