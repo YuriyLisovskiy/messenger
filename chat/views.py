@@ -25,19 +25,24 @@ class ChatListView(View):
 		response = {
 			'data': {
 				'user_id': request.user.id,
-				'user_list': [x.to_dict for x in UserProfile.get_all()],
-				'chat_room_list': [x.to_dict for x in ChatRoom.get_all()]
+				'chats': [x.to_dict() for x in ChatRoom.get_all()]
 			}
 		}
 		return JsonResponse(response, status=200, safe=False)
 
 #	@auth_required
 	def post(self, request):
-		data = {
-			'author': UserProfile.get_by_id(request.user.id),
-			'friend': UserProfile.get_by_id(request.POST.get('delete_chat_room'))
-		}
-		chat_room = ChatRoom.filter_by(**data)
+		if 'id' in request.POST:
+			data = {
+				'author': UserProfile.get_by_id(request.user.id),
+				'friend': UserProfile.get_by_id(request.POST.get('id'))
+			}
+			chat_room = ChatRoom.filter_by(**data)
+		else:
+			data = {
+				# TODO: get storage
+			}
+			chat_room = None
 		if chat_room:
 			chat_room.first().delete()
 			response = {
@@ -52,36 +57,27 @@ class ChatRoomView(View):
 	
 #	@auth_required
 	def get(self, request):
-		if 'msgs_amount' in request.GET and 'chat_room_data' in request.GET:
+		offset = 0
+		if 'offset' in request.GET:
+			offset = request.GET.get('offset')
+		if 'friend_id' not in request.GET:
 			data = {
 				'author': UserProfile.get_by_id(request.user.id),
-				'friend': UserProfile.get_by_id(request.GET.get('chat_room_data'))
+				'friend': UserProfile.get_by_id(request.GET.get('friend_id'))
 			}
 			chat_room = ChatRoom.filter_by(**data)
-			if chat_room:
-				data = {
-					'chat_room': chat_room.first()
-				}
-				messages = Message.filter_by(**data)
-				response = {
-					'data': {
-						'amount': len(messages)
-					},
-					'status': 'OK'
-				}
-				return JsonResponse(response, status=200, safe=False)
-		if 'chat_room_data' in request.GET:
-			filter_data = {
-				'author': UserProfile.get_by_id(request.user.id),
-				'friend': UserProfile.get_by_id(request.GET.get('chat_room_data'))
+		else:
+			data = {
+				# TODO: get storage
 			}
-			chat_room = ChatRoom.filter_by(**filter_data)
-			if not chat_room:
-				return NOT_FOUND
+			chat_room = None
+		if chat_room:
 			filter_data = {
 				'chat_room': chat_room.first()
 			}
 			messages = Message.filter_by(**filter_data)
+			if offset <= len(messages):
+				messages = messages[offset:]
 			response = {
 				'data': [message.to_dict() for message in messages],
 				'status': 'OK'

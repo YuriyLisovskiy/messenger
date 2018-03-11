@@ -13,11 +13,13 @@ from utils.responses import NOT_FOUND, BAD_REQUEST, CREATED, OK
 class Profile(View):
 	
 #	@auth_required
-	def get(self, request, profile_id):
-		user_profile = UserProfile.get_by_id(profile_id)
+	def get(self, request):
+		if 'id' in request.GET:
+			user_id = request.GET.get('id')
+		else:
+			user_id = request.user.id
+		user_profile = UserProfile.get_by_id(user_id)
 		if user_profile:
-			if user_profile.country != '':
-				user_profile.country = header.CountryList().get_county(user_profile.country)
 			user_logos = Photo.filter_by(author=user_profile)
 			response = {
 				'data': {
@@ -30,7 +32,7 @@ class Profile(View):
 		return NOT_FOUND
 
 #	@auth_required
-	def post(self, request, profile_id):
+	def post(self, request):
 		if 'avatar' in request.FILES:
 			user_profile = UserProfile.filter_by(pk=request.user.id)
 			if not user_profile:

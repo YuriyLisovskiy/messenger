@@ -11,12 +11,13 @@ class UserProfile(User):
 	def to_dict(self):
 		context = {
 			'id': self.id,
+			'superuser': self.is_superuser,
 			'username': self.username,
 			'email': self.email,
 			'first_name': self.first_name,
 			'last_name': self.last_name,
 			'mobile_number': self.mobile_number,
-			'bio': self.about,
+			'bio': self.bio,
 		}
 		if self.avatar:
 			context['avatar'] = self.avatar.url
