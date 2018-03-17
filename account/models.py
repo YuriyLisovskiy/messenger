@@ -48,8 +48,12 @@ class UserProfile(User):
 		return UserProfile.objects.filter(**query)
 		
 	@staticmethod
-	def get_all():
-		return UserProfile.objects.all()
+	def get_all(exclude=None):
+		if exclude:
+			users = UserProfile.objects.exclude(id=exclude)
+		else:
+			users = UserProfile.objects.all()
+		return users
 	
 	@staticmethod
 	def add(first_name, last_name, username, password, email, mobile=None, bio=None, avatar=None):

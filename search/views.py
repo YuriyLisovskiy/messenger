@@ -39,8 +39,12 @@ class SearchPeople(View):
 				'status': 'OK'
 			}
 		else:
+			if 'exclude' in request.GET:
+				users = UserProfile.get_all(request.GET.get('exclude'))
+			else:
+				users = UserProfile.get_all()
 			response = {
-				'data': [x.to_dict() for x in UserProfile.get_all()],
+				'data': [x.to_dict() for x in users],
 				'status': 'OK'
 			}
 		return JsonResponse(response, status=200, safe=False)
