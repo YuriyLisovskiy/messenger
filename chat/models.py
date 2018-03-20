@@ -7,7 +7,8 @@ from account.models import UserProfile
 class ChatRoom(models.Model):
 	author = models.ForeignKey(UserProfile, null=True, related_name='author')
 	friend = models.ForeignKey(UserProfile, null=True, related_name='friend')
-	last_message = models.CharField(default="", max_length=9999999)
+	title = models.CharField(default="", max_length=256)
+	last_message_id = models.IntegerField(default=0)
 	logo = models.ImageField(blank=True)
 	has_unread = models.BooleanField(default=True)
 	
@@ -23,9 +24,12 @@ class ChatRoom(models.Model):
 	
 	def to_dict(self):
 		context = {
+			'id': self.id,
+			'title': self.title,
 			'author_id': self.author.id,
 			'friend_id': self.friend.id,
-			'last_message': self.last_message
+			'last_message_id': self.last_message_id,
+			'has_unread': self.has_unread
 		}
 		if self.logo:
 			context['logo'] = self.logo.url
@@ -44,13 +48,14 @@ class ChatRoom(models.Model):
 		return ChatRoom.objects.all()
 	
 	@staticmethod
-	def add(author, friend, logo, last_message=None):
+	def add(author, friend, logo, last_message_id=None):
 		chat_room = ChatRoom()
+		chat_room.title = friend.first_name + " " + friend.last_name
 		chat_room.author = author
 		chat_room.friend = friend
 		chat_room.logo = logo
-		if last_message:
-			chat_room.last_message = last_message
+		if last_message_id:
+			chat_room.last_message_id = last_message_id
 		chat_room.save()
 		return chat_room
 	
