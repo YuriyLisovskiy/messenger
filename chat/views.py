@@ -22,11 +22,16 @@ class ChatListView(View):
 	
 #	@auth_required
 	def get(self, request):
+		if 'author_id' in request.GET:
+			user_id = request.GET.get('author_id')
+		else:
+			return BAD_REQUEST
+		author = UserProfile.get_by_id(user_id)
 		response = {
 			'data': {
-				'user_id': request.user.id,
-				'chats': [x.to_dict() for x in ChatRoom.get_all()]
-			}
+				'chats': [x.to_dict() for x in ChatRoom.filter_by(author=author)]
+			},
+			'status': "OK"
 		}
 		return JsonResponse(response, status=200, safe=False)
 
