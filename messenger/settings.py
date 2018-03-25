@@ -23,8 +23,9 @@ AUTH_PROFILE_MODULE = 'chat.UserProfile'
 INSTALLED_APPS = [
 	'chat.apps.ChatConfig',
 	'account.apps.AccountConfig',
-	'search.apps.SearchConfig',
 	'api.apps.ApiConfig',
+	'authentication.apps.AuthenticationConfig',
+	'users.apps.UsersConfig',
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',

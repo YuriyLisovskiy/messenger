@@ -1,13 +1,9 @@
 from django.http import JsonResponse
 from django.views.generic import View
-from django.contrib.auth import authenticate, login, logout
 
-from utils import header
-from chat.models import ChatRoom, Message
 from .models import UserProfile, Photo
-from utils.view_modifiers import auth_required
-from utils.helpers import email_does_not_exist
-from utils.responses import NOT_FOUND, BAD_REQUEST, CREATED, OK
+from chat.models import ChatRoom, Message
+from utils.responses import NOT_FOUND, BAD_REQUEST
 
 
 class Profile(View):
@@ -67,7 +63,7 @@ class Profile(View):
 			return BAD_REQUEST
 
 
-class EditUserProfile(View):
+class EditProfile(View):
 
 	def get(self, request):
 		return BAD_REQUEST
@@ -94,90 +90,5 @@ class EditUserProfile(View):
 		return NOT_FOUND
 		
 		
-class RegistrationView(View):
-	
-	def get(self, request):
-		return BAD_REQUEST
-	
-	def post(self, request):
-		form = request.POST
-		for key in ['first_name', 'last_name', 'email', 'username', 'password', 'code']:
-			if key not in form.keys():
-				break
-		else:
-			first_name = form.get('first_name')
-			last_name = form.get('last_name')
-			username = form.get('username')
-			password = form.get('password')
-			email = form.get('email')
-			generated_code = form.get('code')
-			errors = {}
-			if not email_does_not_exist(email, UserProfile.objects.all()):
-				errors['email'] = 'account with this email address already exists'
-			if generated_code != request.session['gen_code']:
-				errors['code'] = 'incorrect received code'
-			if len(errors) > 0:
-				response = {
-					'data': {
-						'errors': errors
-					},
-					'status': 'BAD'
-				}
-				return JsonResponse(response, status=400, safe=False)
-			else:
-				data = {
-					'first_name': first_name,
-					'last_name': last_name,
-					'username': username,
-					'email': email,
-					'password': password
-				}
-				UserProfile.add(**data)
-				user = authenticate(username=username, password=password)
-				if user is not None:
-					if user.is_active:
-						login(request, user)
-						return CREATED
-		return BAD_REQUEST
 
 
-class LoginView(View):
-
-	def get(self, request):
-		return BAD_REQUEST
-
-	def post(self, request):
-		if request.user.is_authenticated:
-			return JsonResponse({
-				'authenticated': True,
-				'status': "SUCCESS"
-			})
-		username = request.POST.get('username')
-		password = request.POST.get('password')
-		if username and password:
-			user = authenticate(username=username, password=password)
-			if user is not None:
-				if user.is_active:
-					login(request, user)
-					return OK
-				else:
-					response = {
-						'data': {
-							'error': 'Your account has been disabled'
-						},
-						'status': 'BAD'
-					}
-			else:
-				response = {
-					'data': {
-						'error': 'Invalid login or password'
-					},
-					'status': 'BAD'
-				}
-			return JsonResponse(response, status=400, safe=False)
-		return BAD_REQUEST
-
-
-def logout_user(request):
-	logout(request)
-	return OK
