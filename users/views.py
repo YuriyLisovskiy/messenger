@@ -2,10 +2,10 @@ from django.http import JsonResponse
 from django.views.generic import View
 
 from account.models import UserProfile
-from utils.view_modifiers import auth_required
+from utils.responses import BAD_REQUEST
 
 
-class SearchPeople(View):
+class GetUsers(View):
 
 #	@auth_required
 	def get(self, request):
@@ -48,3 +48,6 @@ class SearchPeople(View):
 				'status': 'OK'
 			}
 		return JsonResponse(response, status=200, safe=False)
+
+	def post(self, request):
+		return BAD_REQUEST

@@ -1,25 +1,15 @@
 from datetime import datetime
 
-from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.generic import View
 
 from account.models import UserProfile
 from chat.models import Message, ChatRoom
-from utils.view_modifiers import auth_required
-from utils.responses import NOT_FOUND, BAD_REQUEST, OK
+from utils.responses import NOT_FOUND, BAD_REQUEST, OK, CREATED
 
 
-class IndexView(View):
+class GetChats(View):
 
-	template_name = 'home.html'
-	
-	def get(self, request):
-		return render(request, self.template_name)
-
-
-class ChatListView(View):
-	
 #	@auth_required
 	def get(self, request):
 		if 'author_id' in request.GET:
@@ -34,6 +24,15 @@ class ChatListView(View):
 			'status': "OK"
 		}
 		return JsonResponse(response, status=200, safe=False)
+
+	def post(self, request):
+		return BAD_REQUEST
+
+
+class DeleteChat(View):
+
+	def get(self, request):
+		return BAD_REQUEST
 
 #	@auth_required
 	def post(self, request):
@@ -50,22 +49,19 @@ class ChatListView(View):
 			chat_room = None
 		if chat_room:
 			chat_room.first().delete()
-			response = {
-				'success': 'Chat room has been deleted.'
-			}
-			return JsonResponse(response, status=201, safe=False)
+			return CREATED
 		else:
 			return NOT_FOUND
 
 
-class ChatRoomView(View):
-	
+class GetMessages(View):
+
 #	@auth_required
 	def get(self, request):
-		if 'friend_id' not in request.GET:
+		if 'target_id' not in request.GET:
 			data = {
 				'author': UserProfile.get_by_id(request.user.id),
-				'friend': UserProfile.get_by_id(request.GET.get('friend_id'))
+				'friend': UserProfile.get_by_id(request.GET.get('target_id'))
 			}
 			chat_room = ChatRoom.filter_by(**data)
 		else:
@@ -94,7 +90,16 @@ class ChatRoomView(View):
 			return JsonResponse(response, status=200, safe=False)
 		else:
 			return NOT_FOUND
-	
+
+	def post(self, request):
+		return BAD_REQUEST
+
+
+class SendMessage(View):
+
+	def get(self, request):
+		return BAD_REQUEST
+
 #	@auth_required
 	def post(self, request):
 		msg = request.POST.get('msg')

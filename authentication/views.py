@@ -1,15 +1,15 @@
 import smtplib
 from email.mime.text import MIMEText
 
-from django.contrib.auth import authenticate, logout
-from django.contrib.auth.views import login
-from django.http import JsonResponse
 from django.views import View
+from django.http import JsonResponse
+from django.contrib.auth.views import login
+from django.contrib.auth import authenticate, logout
 
 from account.models import UserProfile
-from messenger.settings import EMAIL_LOGIN, EMAIL_PASSWORD, EMAIL_HOST, EMAIL_PORT
 from utils.helpers import email_does_not_exist
 from utils.responses import BAD_REQUEST, CREATED, OK, NOT_FOUND
+from messenger.settings import EMAIL_LOGIN, EMAIL_PASSWORD, EMAIL_HOST, EMAIL_PORT
 
 
 class SignUp(View):
@@ -97,11 +97,11 @@ class SignIn(View):
 class SignOut(View):
 
 	def get(self, request):
-		logout(request)
-		return CREATED
+		return BAD_REQUEST
 
 	def post(self, request):
-		return BAD_REQUEST
+		logout(request)
+		return CREATED
 
 
 class CheckEmail(View):
