@@ -6,7 +6,7 @@ from chat.models import ChatRoom, Message
 from utils.responses import NOT_FOUND, BAD_REQUEST
 
 
-class GetUser(View):
+class GetProfile(View):
 	
 #	@auth_required
 	def get(self, request):
