@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.views.generic import View
 
 from .models import UserProfile, Photo
-from chat.models import ChatRoom, Message
+from chat.models import Dialog, Message
 from utils.responses import NOT_FOUND, BAD_REQUEST
 
 
@@ -41,18 +41,18 @@ class UpdateProfile(View):
 		profile_id = request.POST.get('id')
 		if not profile_id:
 			return BAD_REQUEST
-		user_profile = UserProfile.filter_by(pk=profile_id)
+		user_profile = UserProfile.filter_by(pk=profile_id).first()
 		if not user_profile:
 			return BAD_REQUEST
 		avatar = None
 		if 'avatar' in request.FILES:
 			avatar = request.FILES['avatar']
-			chat_rooms = ChatRoom.filter_by(friend=user_profile)
+			chat_rooms = Dialog.filter_by(friend=user_profile)
 			if chat_rooms:
 				for room in chat_rooms:
 					room.logo = avatar
 					room.save()
-			messages = Message.filter_by(author=user_profile)
+			messages = Message.filter_by(author_id=user_profile.id)
 			if messages:
 				for message in messages:
 					message.author_logo = avatar
