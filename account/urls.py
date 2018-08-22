@@ -1,10 +1,9 @@
 from django.conf.urls import url
 from . import views as account_views
 
-
 appName = 'account'
 
 urlpatterns = [
-	url(r'^user/id=(?P<profile_id>[0-9]+)/edit/?$', account_views.EditUserProfile.as_view(), name='edit_profile'),
-	url(r'^user/id=(?P<profile_id>[0-9]+)/?$', account_views.Profile.as_view(), name='profile')
+	url(r'^getProfile/?$', account_views.GetProfile.as_view(), name='get_profile'),
+	url(r'^updateProfile/?$', account_views.UpdateProfile.as_view(), name='update_profile'),
 ]

@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist, EmptyResultSet
+from django.core.exceptions import ObjectDoesNotExist
 
 from account.models import UserProfile
 
@@ -7,19 +7,33 @@ from account.models import UserProfile
 class ChatRoom(models.Model):
 	author = models.ForeignKey(UserProfile, null=True, related_name='author')
 	friend = models.ForeignKey(UserProfile, null=True, related_name='friend')
+	title = models.CharField(default="", max_length=256)
+	last_message_id = models.IntegerField(default=0)
 	logo = models.ImageField(blank=True)
+	has_unread = models.BooleanField(default=True)
 	
 	@staticmethod
-	def filter_by(author=None, friend=None, logo=None, **kwargs):
+	def filter_by(author=None, friend=None, **kwargs):
 		query = {}
 		if author:
 			query['author'] = author
 		if friend:
 			query['friend'] = friend
-		if logo:
-			query['logo'] = logo
 		query.update(**kwargs)
 		return ChatRoom.objects.filter(**query)
+	
+	def to_dict(self):
+		context = {
+			'id': self.id,
+			'title': self.title,
+			'author_id': self.author.id,
+			'friend_id': self.friend.id,
+			'last_message_id': self.last_message_id,
+			'has_unread': self.has_unread
+		}
+		if self.logo:
+			context['logo'] = self.logo.url
+		return context
 	
 	@staticmethod
 	def get_by_id(pk):
@@ -34,18 +48,19 @@ class ChatRoom(models.Model):
 		return ChatRoom.objects.all()
 	
 	@staticmethod
-	def add(author, friend, logo, **kwargs):
-		chat_room = ChatRoom.filter_by(author=author, friend=friend, logo=logo).first()
-		if not chat_room:
-			chat_room = ChatRoom()
-			chat_room.author = author
-			chat_room.friend = friend
-			chat_room.logo = logo
-			chat_room.save()
+	def add(author, friend, logo, last_message_id=None):
+		chat_room = ChatRoom()
+		chat_room.title = friend.first_name + " " + friend.last_name
+		chat_room.author = author
+		chat_room.friend = friend
+		chat_room.logo = logo
+		if last_message_id:
+			chat_room.last_message_id = last_message_id
+		chat_room.save()
 		return chat_room
 	
 	@staticmethod
-	def edit(pk, author=None, friend=None, logo=None, **kwargs):
+	def edit(pk, author=None, friend=None, logo=None):
 		chat_room = ChatRoom.get_by_id(pk)
 		if not chat_room:
 			return None
@@ -69,21 +84,20 @@ class ChatRoom(models.Model):
 
 class Message(models.Model):
 	chat_room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, default=1)
-	msg = models.CharField(default="", max_length=99999)
-	author_username = models.CharField(default="", max_length=100)
+	msg = models.CharField(default="", max_length=9999999)
 	time = models.CharField(default="", max_length=100)
-	author_fn_ln = models.CharField(default="", max_length=100)
+	author_initials = models.CharField(default="", max_length=100)
 	author_logo = models.FileField(blank=True)
-	author_id = models.CharField(default="", max_length=100)
+	author_id = models.IntegerField(default=0)
+	is_unread = models.BooleanField(default=True)
 
 	def to_dict(self):
 		context = {
 			'id': self.id,
-			'chat_room': self.chat_room.id,
-			'msg': self.msg,
-			'author_username': self.author_username,
+			'chat_id': self.chat_room.id,
+			'message': self.msg,
 			'time': self.time,
-			'author_fn_ln': self.author_fn_ln,
+			'author_fn_ln': self.author_initials,
 			'author_id': self.author_id
 		}
 		if self.author_logo:
@@ -103,7 +117,7 @@ class Message(models.Model):
 		return Message.objects.all()
 	
 	@staticmethod
-	def filter_by(chat_room=None, msg=None, author=None, time=None, author_fn_ln=None, author_logo=None,
+	def filter_by(chat_room=None, msg=None, author=None, time=None, author_initials=None, author_logo=None,
 				author_id=None, **kwargs):
 		query = {}
 		if chat_room:
@@ -114,8 +128,8 @@ class Message(models.Model):
 			query['author_username'] = author.username
 		if time:
 			query['time'] = time
-		if author_fn_ln:
-			query['author_fn_ln'] = author_fn_ln
+		if author_initials:
+			query['author_initials'] = author_initials
 		if author_logo:
 			query['author_logo'] = author_logo
 		if author_id:
@@ -124,20 +138,20 @@ class Message(models.Model):
 		return Message.objects.filter(**query)
 		
 	@staticmethod
-	def add(chat_room, msg, author, time, **kwargs):
+	def add(chat_room, msg, author, time):
 		message = Message()
 		message.chat_room = chat_room
 		message.msg = msg
 		message.author_username = author.username
 		message.time = time
-		message.author_fn_ln = author.first_name[0] + author.last_name[0]
+		message.author_initials = author.first_name[0] + author.last_name[0]
 		message.author_logo = author.logo
 		message.author_id = author.id
 		message.save()
 		return message
 	
 	@staticmethod
-	def edit(pk, chat_room=None, msg=None, author=None, time=None, **kwargs):
+	def edit(pk, chat_room=None, msg=None, author=None, time=None):
 		message = Message.get_by_id(pk)
 		if not message:
 			return None
@@ -147,7 +161,7 @@ class Message(models.Model):
 			message.msg = msg
 		if author:
 			message.author_username = author.username
-			message.author_fn_ln = author.first_name[0] + author.last_name[0]
+			message.author_initials = author.first_name[0] + author.last_name[0]
 			message.author_logo = author.logo
 			message.author_id = author.id
 		if time:

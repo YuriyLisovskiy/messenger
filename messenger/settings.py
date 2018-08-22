@@ -14,7 +14,7 @@ SECRET_KEY = 'drl@xbez3ez3+-l(npy5r*ku2z4%7lh4@p_v9y=-lh1fg+a4$6'
 DEBUG = True
 
 # If you don't want run the server on localhost, add here your available host(s).
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = []
 
 AUTH_PROFILE_MODULE = 'chat.UserProfile'
 
@@ -23,8 +23,9 @@ AUTH_PROFILE_MODULE = 'chat.UserProfile'
 INSTALLED_APPS = [
 	'chat.apps.ChatConfig',
 	'account.apps.AccountConfig',
-	'search.apps.SearchConfig',
 	'api.apps.ApiConfig',
+	'authentication.apps.AuthenticationConfig',
+	'users.apps.UsersConfig',
 	'django.contrib.admin',
 	'django.contrib.auth',
 	'django.contrib.contenttypes',
@@ -117,10 +118,14 @@ EMAIL_PORT = 587
 EMAIL_LOGIN = 'change_me_in_local_settings'
 EMAIL_PASSWORD = 'change_me_in_local_settings'
 
-LOGIN_REDIRECT_URL = '/account/login/'
+LOGIN_REDIRECT_URL = '/login'
+
+# Add extra hosts in local_settings.py
+EXTRA_HOSTS = ['127.0.0.1']
 
 try:
 	from messenger.local_settings import *
 except ImportError:
 	pass
 
+ALLOWED_HOSTS += EXTRA_HOSTS

@@ -1,6 +1,7 @@
 import os
 import glob
 
+from unittest import skip
 from django.test import TestCase
 from django.core.files.images import ImageFile
 
@@ -8,6 +9,7 @@ from account.models import UserProfile
 from chat.models import Message, ChatRoom
 
 
+@skip
 class TestChatRoom(TestCase):
 
 	def setUp(self):
@@ -121,6 +123,7 @@ class TestChatRoom(TestCase):
 		return img
 
 
+@skip
 class TestMessage(TestCase):
 	
 	def setUp(self):

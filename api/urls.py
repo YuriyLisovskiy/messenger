@@ -1,10 +1,10 @@
-from django.conf.urls import url
-
-from . import views as api_views
+from django.conf.urls import include, url
 
 appName = 'api'
 
 urlpatterns = [
-	url(r'^send/email/?$', api_views.send_email),
-	url(r'^chat/manager/?$', api_views.Chat.as_view())
+	url(r'^chats/', include('chat.urls')),
+	url(r'^users/', include('users.urls')),
+	url(r'^account/', include('account.urls')),
+	url(r'^auth/', include('authentication.urls'))
 ]

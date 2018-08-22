@@ -1,35 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.exceptions import ObjectDoesNotExist, EmptyResultSet
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class UserProfile(User):
-	logo = models.ImageField(blank=True)
-	gender = models.CharField(max_length=6, blank=True)
-	birthday = models.DateField(blank=True, null=True)
-	country = models.CharField(max_length=100, blank=True)
-	city = models.CharField(max_length=50, blank=True)
+	avatar = models.ImageField(blank=True)
 	mobile_number = models.CharField(max_length=10, blank=True)
-	about = models.CharField(max_length=999999, blank=True)
-	education = models.CharField(max_length=100, blank=True)
+	bio = models.CharField(max_length=256, blank=True)
 
 	def to_dict(self):
 		context = {
 			'id': self.id,
+			'superuser': self.is_superuser,
 			'username': self.username,
 			'email': self.email,
 			'first_name': self.first_name,
 			'last_name': self.last_name,
-			'gender': self.gender,
-			'birthday': self.birthday,
-			'country': self.country,
-			'city': self.city,
 			'mobile_number': self.mobile_number,
-			'about': self.about,
-			'education': self.education
+			'bio': self.bio,
 		}
-		if self.logo:
-			context['logo'] = self.logo.url
+		if self.avatar:
+			context['avatar'] = self.avatar.url
 		return context
 
 	@staticmethod
@@ -41,61 +32,48 @@ class UserProfile(User):
 			return None
 	
 	@staticmethod
-	def filter_by(first_name=None, last_name=None, gender=None, birthday=None, country=None, city=None,
-				education=None, **kwargs):
+	def filter_by(first_name=None, last_name=None, username=None, email=None, mobile_number=None, **kwargs):
 		query = {}
 		if first_name:
 			query['first_name'] = first_name
 		if last_name:
 			query['last_name'] = last_name
-		if gender:
-			query['gender'] = gender
-		if birthday:
-			query['birthday'] = birthday
-		if country:
-			query['country'] = country
-		if city:
-			query['city'] = city
-		if education:
-			query['education'] = education
+		if username:
+			query['username'] = username
+		if email:
+			query['email'] = email
+		if mobile_number:
+			query['mobile_number'] = mobile_number
 		query.update(**kwargs)
 		return UserProfile.objects.filter(**query)
 		
 	@staticmethod
-	def get_all():
-		return UserProfile.objects.all()
+	def get_all(exclude=None):
+		if exclude:
+			users = UserProfile.objects.exclude(id=exclude)
+		else:
+			users = UserProfile.objects.all()
+		return users
 	
 	@staticmethod
-	def add(first_name, last_name, username, password, email, city=None, country=None, birthday=None, gender=None,
-			education=None,	mobile=None, about=None, logo=None):
+	def add(first_name, last_name, username, password, email, mobile=None, bio=None, avatar=None):
 		user_profile = UserProfile()
 		user_profile.first_name = first_name
 		user_profile.last_name = last_name
 		user_profile.email = email
 		user_profile.username = username
 		user_profile.set_password(password)
-		if city:
-			user_profile.city = city
-		if country:
-			user_profile.country = country
-		if gender:
-			user_profile.gender = gender
-		if education:
-			user_profile.education = education
 		if mobile:
 			user_profile.mobile_number = mobile
-		if about:
-			user_profile.about = about
-		if birthday:
-			user_profile.birthday = birthday
-		if logo:
-			user_profile.logo = logo
+		if bio:
+			user_profile.bio = bio
+		if avatar:
+			user_profile.avatar = avatar
 		user_profile.save()
 		return user_profile
 
 	@staticmethod
-	def edit(pk, first_name=None, last_name=None, city=None, country=None, birthday=None, gender=None, education=None,
-			mobile=None, about=None):
+	def edit(pk, first_name=None, last_name=None, mobile=None, bio=None, username=None, avatar=None):
 		user = UserProfile.get_by_id(pk)
 		if not user:
 			return None
@@ -103,72 +81,66 @@ class UserProfile(User):
 			user.first_name = first_name
 		if last_name:
 			user.last_name = last_name
-		if city:
-			user.city = city
-		if country:
-			user.country = country
-		if gender:
-			user.gender = gender
-		if education:
-			user.education = education
+		if username:
+			user.username = username
 		if mobile:
 			user.mobile_number = mobile
-		if about:
-			user.about = about
-		if birthday:
-			user.birthday = birthday
+		if bio:
+			user.bio = bio
+		if avatar:
+			user.avatar = avatar
 		user.save()
 		return user
 		
 
-class PhotoLogo(models.Model):
-	owner = models.ForeignKey(UserProfile, on_delete=models.CASCADE, default=1)
+class Photo(models.Model):
+	author = models.ForeignKey(UserProfile, on_delete=models.CASCADE, default=1)
 	photo = models.ImageField()
-	upload_time = models.CharField(default="", max_length=100)
+	
+	def to_dict(self):
+		return {
+			'author_id': self.author.id,
+			'photo': self.photo.url
+		}
 	
 	@staticmethod
 	def get_by_id(pk):
 		try:
-			photo = PhotoLogo.objects.get(pk=pk)
+			photo = Photo.objects.get(pk=pk)
 			return photo
 		except ObjectDoesNotExist:
 			return None
 		
 	@staticmethod
 	def get_all():
-		return PhotoLogo.objects.all()
+		return Photo.objects.all()
 		
 	@staticmethod
-	def filter_by(owner=None, photo=None, upload_time=None, **kwargs):
+	def filter_by(author=None, photo=None, **kwargs):
 		query = {}
-		if owner:
-			query['owner'] = owner
+		if author:
+			query['author'] = author
 		if photo:
 			query['photo'] = photo
-		if upload_time:
-			query['upload_time'] = upload_time
 		query.update(**kwargs)
-		return PhotoLogo.objects.filter(**query)
+		return Photo.objects.filter(**query)
 	
 	@staticmethod
-	def add(owner, photo, upload_time):
-		new_photo = PhotoLogo()
-		new_photo.owner = owner
+	def add(author, photo):
+		new_photo = Photo()
+		new_photo.author = author
 		new_photo.photo = photo
-		new_photo.upload_time = upload_time
 		new_photo.save()
 		return new_photo
 	
 	@staticmethod
-	def edit(pk, owner=None, photo=None, upload_time=None):
-		photo_to_edit = PhotoLogo.get_by_id(pk)
+	def edit(pk, author=None, photo=None):
+		photo_to_edit = Photo.get_by_id(pk)
 		if not photo_to_edit:
 			return None
-		if owner:
-			photo_to_edit.owner = owner
+		if author:
+			photo_to_edit.author = author
 		if photo:
 			photo_to_edit.photo = photo
-		if upload_time:
-			photo_to_edit.upload_time = upload_time
 		photo_to_edit.save()
 		return photo_to_edit

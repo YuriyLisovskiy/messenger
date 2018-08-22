@@ -3,7 +3,7 @@
 {% block title %}Chat{% endblock %}
 {% block head %}
 	{{ block.super }}
-	<link rel="stylesheet" type="text/css" href="{% static 'chat/css/chat.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/chat.css' %}">
 {% endblock %}
 {% block chat_active %}active{% endblock %}
 {% block body %}
@@ -37,5 +37,5 @@
 	<script type="text/javascript">
 		var global_var_current_user = '{{ user.username }}';
 	</script>
-	<script type="text/javascript" src="{% static 'api/js/chat.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/chat.js' %}"></script>
 {% endblock %}

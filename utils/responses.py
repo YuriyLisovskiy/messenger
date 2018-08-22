@@ -1,41 +1,9 @@
-from django.http import HttpResponse
-from django.shortcuts import render_to_response
-
-OK = HttpResponse('ok', status=200)
-CREATED = HttpResponse('created', status=201)
+from django.http import JsonResponse
 
 
-def BAD_REQUEST():
-	return render_to_response(
-		'error.html',
-		status=400,
-		context={
-			'error_code': 400,
-			'error_type': 'Bad request',
-			'error_message': 'Bad request'
-		}
-	)
-
-
-def PERMISSION_DENIED():
-	return render_to_response(
-		'error.html',
-		status=403,
-		context={
-			'error_code': 403,
-			'error_type': 'Forbidden',
-			'error_message': 'Access denied'
-		}
-	)
-
-
-def NOT_FOUND():
-	return render_to_response(
-		'error.html',
-		status=404,
-		context={
-			'error_code': 404,
-			'error_type': 'Not found',
-			'error_message': 'The web page does not exist'
-		}
-	)
+OK = JsonResponse(dict({'status': 'OK'}), status=200, safe=False)
+CREATED = JsonResponse(dict({'status': 'CREATED'}), status=201, safe=False)
+BAD_REQUEST = JsonResponse(dict({'status': 'BAD'}), status=400, safe=False)
+NOT_FOUND = JsonResponse(dict({'status': 'NOT FOUND'}), status=404, safe=False)
+PERMISSION_DENIED = JsonResponse(dict({'status': 'FORBIDDEN'}), status=403, safe=False)
+METHOD_NOT_ALLOWED = JsonResponse(dict({'status': 'NOT ALLOWED'}), status=405, safe=False)
