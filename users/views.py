@@ -3,11 +3,18 @@ from django.views.generic import View
 
 from account.models import UserProfile
 from utils.responses import BAD_REQUEST
+from utils.view_modifiers import auth_required
 
 
+# Returns users in json format.
+#
+# API url: /api/v1/users/getUsers
+# Required params:
+#   - 'search': string (optional)
+#   - 'exclude': int (optional)
 class GetUsers(View):
 
-#	@auth_required
+	@auth_required
 	def get(self, request):
 		if 'search' in request.GET:
 			keyword = request.GET.get('search')
@@ -49,5 +56,6 @@ class GetUsers(View):
 			}
 		return JsonResponse(response, status=200, safe=False)
 
-	def post(self, request):
+	@staticmethod
+	def post():
 		return BAD_REQUEST
