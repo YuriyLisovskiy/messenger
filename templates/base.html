@@ -30,7 +30,7 @@
                     <div id="navbar" class="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
                             <li class="{% block chat_active %}{% endblock %}">
-                                <a href="{% url 'chat' %}">
+                                <a href="{% url 'get_chats' %}">
                                     <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;
                                     Chat
                                 </a>
@@ -38,7 +38,7 @@
                         </ul>
                         <ul class="nav navbar-nav">
                             <li class="{% block people_active %}{% endblock %}">
-                                <a href="{% url 'people' %}">
+                                <a href="{% url 'get_users' %}">
                                     <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;
                                     People
                                 </a>
@@ -67,7 +67,7 @@
                         </div>
                         <ul class="nav navbar-nav navbar-right">
                             <li>
-                                <a href="{% url 'logout' %}">
+                                <a href="{% url 'sign_out' %}">
                                     <span class="glyphicon glyphicon-off"></span>&nbsp;
                                     Logout
                                 </a>
@@ -75,7 +75,7 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li class="{% block user_profile %}{% endblock %}">
-                                <a href="{% url 'profile' %}">
+                                <a href="{% url 'get_profile' %}">
                                     <span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;
                                     {{ user.username }}
                                 </a>
@@ -83,7 +83,7 @@
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li class="{% block edit_profile_active %}{% endblock %}">
-                                <a href="{% url 'edit_profile' %}">
+                                <a href="{% url 'update_profile' %}">
                                     <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;
                                     Edit profile
                                 </a>
@@ -93,7 +93,7 @@
                 {% else %}
                     <ul class="nav navbar-nav navbar-right">
                         <li class="{% block register_active %}{% endblock %}">
-                            <a href="{% url 'register' %}">
+                            <a href="{% url 'sign_up' %}">
                                 <span class="glyphicon glyphicon-flash" aria-hidden="true"></span>&nbsp;
                                 Sign up
                             </a>
@@ -101,7 +101,7 @@
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li class="{% block login_active %}{% endblock %}">
-                            <a href="{% url 'login' %}">
+                            <a href="{% url 'sign_in' %}">
                                 <span class="glyphicon glyphicon-fire" aria-hidden="true"></span>&nbsp;
                                 Login
                             </a>
