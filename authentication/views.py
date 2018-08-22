@@ -12,12 +12,24 @@ from utils.responses import BAD_REQUEST, CREATED, OK, NOT_FOUND
 from messenger.settings import EMAIL_LOGIN, EMAIL_PASSWORD, EMAIL_HOST, EMAIL_PORT
 
 
+# Performs user signing up.
+#
+# Method: POST
+# API url: /api/v1/auth/signUp
+# Required params:
+#   - 'first_name': string (required)
+#   - 'last_name': string (required)
+#   - 'email': string (required)
+#   - 'password': string (required)
+#   - 'code': int (required)
 class SignUp(View):
 
-	def get(self, request):
+	@staticmethod
+	def get():
 		return BAD_REQUEST
 
-	def post(self, request):
+	@staticmethod
+	def post(request):
 		form = request.POST
 		for key in ['first_name', 'last_name', 'email', 'password', 'code']:
 			if key not in form.keys():
@@ -57,21 +69,28 @@ class SignUp(View):
 		return BAD_REQUEST
 
 
+# Performs user signing in.
+#
+# Method: POST
+# API url: /api/v1/auth/signIn
+# Required params:
+#   - 'username': string (required)
+#   - 'password': string (required)
 class SignIn(View):
-
-	def get(self, request):
+	
+	@staticmethod
+	def get():
 		return BAD_REQUEST
 
-	def post(self, request):
+	@staticmethod
+	def post(request):
 		if request.user.is_authenticated:
 			return JsonResponse({
 				'authenticated': True,
 				'status': "SUCCESS"
 			})
-		username = request.POST.get('username')
-		password = request.POST.get('password')
-		if username and password:
-			user = authenticate(username=username, password=password)
+		if 'username' in request.POST and 'password' in request.POST:
+			user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
 			if user is not None:
 				if user.is_active:
 					login(request, user)
@@ -94,19 +113,32 @@ class SignIn(View):
 		return BAD_REQUEST
 
 
+# Performs user signing out.
+#
+# Method: POST
+# API url: /api/v1/auth/signOut
 class SignOut(View):
 
-	def get(self, request):
+	@staticmethod
+	def get():
 		return BAD_REQUEST
 
-	def post(self, request):
+	@staticmethod
+	def post(request):
 		logout(request)
 		return CREATED
 
 
+# Checks user email before registration.
+#
+# Method: GET
+# API url: /api/v1/auth/checkEmail
+# Required params:
+#   - 'email': string (required)
 class CheckEmail(View):
 
-	def get(self, request):
+	@staticmethod
+	def get(request):
 		if 'email' in request.GET:
 			user = UserProfile.filter_by(email=request.GET.get('email'))
 			if user:
@@ -116,16 +148,26 @@ class CheckEmail(View):
 		else:
 			return BAD_REQUEST
 
-	def post(self, request):
+	@staticmethod
+	def post(request):
 		return BAD_REQUEST
 
 
+# Sends email to registered user for verifying its account.
+#
+# Method: POST
+# API url: /api/v1/auth/sendEmail
+# Required params:
+#   - 'generated_code': int (required)
+#   - 'user_email': string (required)
 class SendEmail(View):
-
-	def get(self, request):
+	
+	@staticmethod
+	def get():
 		return BAD_REQUEST
 
-	def post(self, request):
+	@staticmethod
+	def post(request):
 		if 'generated_code' in request.POST and 'user_email' in request.POST:
 			usr_email = request.POST.get('user_email')
 			if not email_does_not_exist(usr_email, UserProfile.get_all()):

@@ -8,6 +8,7 @@ from utils.view_modifiers import auth_required
 
 # Returns users in json format.
 #
+# Method: GET
 # API url: /api/v1/users/getUsers
 # Required params:
 #   - 'search': string (optional)

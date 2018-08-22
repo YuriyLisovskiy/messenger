@@ -10,5 +10,6 @@ class IndexView(View):
 	def get(self, request):
 		return render(request, self.template_name)
 
-	def post(self, request):
+	@staticmethod
+	def post():
 		return BAD_REQUEST

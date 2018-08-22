@@ -11,6 +11,7 @@ from utils.responses import NOT_FOUND, BAD_REQUEST, OK, CREATED
 
 # Returns all dialogs in json format for current user.
 #
+# Method: GET
 # API url: /api/v1/dialogs/getDialogs
 class GetDialogs(View):
 
@@ -32,9 +33,10 @@ class GetDialogs(View):
 
 # Returns dialog in json format.
 #
+# Method: GET
 # API url: /api/v1/dialogs/getDialog
 # Required params:
-#   - 'id': int
+#   - 'id': int (required)
 class GetDialog(View):
 
 	@auth_required
@@ -63,9 +65,10 @@ class GetDialog(View):
 
 # Creates dialog.
 #
+# Method: POST
 # API url: /api/v1/dialogs/createDialog
 # Required params:
-#   - 'companion_id': int
+#   - 'companion_id': int (required)
 class CreateDialog(View):
 	
 	@staticmethod
@@ -113,9 +116,10 @@ class CreateDialog(View):
 
 # Removes dialog.
 #
+# Method: POST
 # API url: /api/v1/dialogs/deleteDialog
 # Required params:
-#   - 'id': int
+#   - 'id': int (required)
 class DeleteDialog(View):
 
 	@staticmethod
@@ -147,9 +151,10 @@ class DeleteDialog(View):
 
 # Returns messages from given dialog.
 #
+# Method: GET
 # API url: /api/v1/dialogs/getMessages
 # Required params:
-#   - 'dialog_id': int
+#   - 'dialog_id': int (required)
 class GetMessages(View):
 
 	@auth_required
@@ -187,10 +192,11 @@ class GetMessages(View):
 
 # Returns message from given dialog.
 #
+# Method: GET
 # API url: /api/v1/dialogs/getMessage
 # Required params:
-#   - 'dialog_id': int
-#   - 'message_id': int
+#   - 'dialog_id': int (required)
+#   - 'message_id': int (required)
 class GetMessage(View):
 
 	@auth_required
@@ -221,10 +227,11 @@ class GetMessage(View):
 
 # Sends message from given dialog.
 #
+# Method: POST
 # API url: /api/v1/dialogs/sendMessage
 # Required params:
-#   - 'dialog_id': int
-#   - 'message_id': int
+#   - 'dialog_id': int (required)
+#   - 'message_id': int (required)
 class SendMessage(View):
 
 	@staticmethod
@@ -284,10 +291,11 @@ class SendMessage(View):
 
 # Updates message from given dialog.
 #
+# Method: POST
 # API url: /api/v1/dialogs/updateMessage
 # Required params:
-#   - 'dialog_id': int
-#   - 'message_id': int
+#   - 'dialog_id': int (required)
+#   - 'message_id': int (required)
 class UpdateMessage(View):
 
 	@staticmethod
@@ -316,11 +324,12 @@ class UpdateMessage(View):
 
 # Deletes message from given dialog.
 #
+# Method: POST
 # API url: /api/v1/dialogs/deleteMessage
 # Required params:
-#   - 'dialog_id': int
-#   - 'message_id': int
-#   - 'delete_both': bool
+#   - 'dialog_id': int (required)
+#   - 'message_id': int (required)
+#   - 'delete_both': bool (optional)
 class DeleteMessage(View):
 
 	@staticmethod
