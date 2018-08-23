@@ -65,7 +65,13 @@ class SignUp(View):
 				if user is not None:
 					if user.is_active:
 						login(request, user)
-						return CREATED
+						response = {
+							'data': {
+								user.to_dict()
+							},
+							'status': 'CREATED'
+						}
+						return JsonResponse(response, status=201, safe=False)
 		return BAD_REQUEST
 
 
@@ -142,7 +148,13 @@ class CheckEmail(View):
 		if 'email' in request.GET:
 			user = UserProfile.filter_by(email=request.GET.get('email'))
 			if user:
-				return OK
+				response = {
+					'data': {
+						request.GET.get('email')
+					},
+					'status': 'OK'
+				}
+				return JsonResponse(response, status=200, safe=False)
 			else:
 				return NOT_FOUND
 		else:

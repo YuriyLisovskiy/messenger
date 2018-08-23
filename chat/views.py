@@ -110,7 +110,13 @@ class CreateDialog(View):
 			secondary_dialog.link_id = initial_dialog.id
 			initial_dialog.save()
 			secondary_dialog.save()
-			return CREATED
+			response = {
+				'data': {
+					initial_dialog.to_dict()
+				},
+				'status': 'CREATED'
+			}
+			return JsonResponse(response, status=201, safe=False)
 		return BAD_REQUEST
 
 
@@ -144,7 +150,13 @@ class DeleteDialog(View):
 						secondary_dialog.link_id = secondary_dialog.id
 						secondary_dialog.save()
 				if Dialog.remove(dialog.id):
-					return CREATED
+					response = {
+						'data': {
+							dialog.to_dict()
+						},
+						'status': 'CREATED'
+					}
+					return JsonResponse(response, status=201, safe=False)
 			return NOT_FOUND
 		return BAD_REQUEST
 
@@ -285,7 +297,13 @@ class SendMessage(View):
 					else:
 						return NOT_FOUND
 				initial_message.save()
-				return OK
+				response = {
+					'data': {
+						initial_message.to_dict()
+					},
+					'status': 'CREATED'
+				}
+				return JsonResponse(response, status=201, safe=False)
 		return BAD_REQUEST
 
 
@@ -317,7 +335,13 @@ class UpdateMessage(View):
 						secondary_message = Message.filter_by(pk=initial_message.link_id, dialog=secondary_dialog).first()
 						if secondary_message:
 							secondary_message.edit(text=request.POST.get('text'))
-					return CREATED
+					response = {
+						'data': {
+							initial_message.to_dict()
+						},
+						'status': 'CREATED'
+					}
+					return JsonResponse(response, status=201, safe=False)
 			return NOT_FOUND
 		return BAD_REQUEST
 
@@ -352,6 +376,12 @@ class DeleteMessage(View):
 							if secondary_message:
 								Message.remove(secondary_message.id)
 					Message.remove(initial_message.id)
-					return CREATED
+					response = {
+						'data': {
+							initial_message.to_dict()
+						},
+						'status': 'CREATED'
+					}
+					return JsonResponse(response, status=201, safe=False)
 			return NOT_FOUND
 		return BAD_REQUEST
