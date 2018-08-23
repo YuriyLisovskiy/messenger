@@ -72,25 +72,20 @@ class UserProfile(User):
 		user_profile.save()
 		return user_profile
 
-	@staticmethod
-	def edit(pk, first_name=None, last_name=None, mobile=None, bio=None, username=None, avatar=None):
-		user = UserProfile.get_by_id(pk)
-		if not user:
-			return None
+	def edit(self, first_name=None, last_name=None, mobile=None, bio=None, username=None, avatar=None):
 		if first_name:
-			user.first_name = first_name
+			self.first_name = first_name
 		if last_name:
-			user.last_name = last_name
+			self.last_name = last_name
 		if username:
-			user.username = username
+			self.username = username
 		if mobile:
-			user.mobile_number = mobile
+			self.mobile_number = mobile
 		if bio:
-			user.bio = bio
+			self.bio = bio
 		if avatar:
-			user.avatar = avatar
-		user.save()
-		return user
+			self.avatar = avatar
+		self.save()
 		
 
 class Photo(models.Model):
@@ -133,14 +128,10 @@ class Photo(models.Model):
 		new_photo.save()
 		return new_photo
 	
-	@staticmethod
-	def edit(pk, author=None, photo=None):
-		photo_to_edit = Photo.get_by_id(pk)
-		if not photo_to_edit:
-			return None
+	def edit(self, author=None, photo=None):
 		if author:
-			photo_to_edit.author = author
+			self.author = author
 		if photo:
-			photo_to_edit.photo = photo
-		photo_to_edit.save()
-		return photo_to_edit
+			self.photo = photo
+		self.save()
+		return self
